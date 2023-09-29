@@ -16,10 +16,10 @@
 
 		#region Component Helpers
 
-		public void Set<T>(T component) => World.Library.Set(this, component);
-		public ref T Get<T>() => ref World.Library.Get<T>(this);
-		public bool Contains<T>() => World.Library.Contains<T>(this);
-		public bool Remove<T>() => World.Library.Remove<T>(this);
+		public void Set<T>(T component) => World.SetComponents(this, component);
+		public ref T Get<T>() => ref World.GetComponent<T>(this);
+		// public bool Contains<T>() => World.Library.Contains<T>(this);
+		// public bool Remove<T>() => World.Library.Remove<T>(this);
 
 		#endregion
 
