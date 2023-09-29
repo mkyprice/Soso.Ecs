@@ -16,14 +16,32 @@ public class Tests
 	[Test]
 	public void Test1()
 	{
-		Entity entity = World.CreateEntity(new TestComp()
+		Entity entity = World.CreateEntity(new TestCompA()
 		{
 			Value = "Hello"
 		});
 
-		ref TestComp c = ref entity.Get<TestComp>();
-		Console.WriteLine(c.Value);
+		ref TestCompA c = ref entity.Get<TestCompA>();
+		Assert.IsTrue(c.Value.Equals("Hello"));
 		c.Value = "World";
-		Console.WriteLine(entity.Get<TestComp>().Value);
+		Assert.IsTrue(entity.Get<TestCompA>().Value.Equals("World"));
+	}
+
+	[Test]
+	public void Test2()
+	{
+		Entity entity = World.CreateEntity(new TestCompA()
+		{
+			Value = "Hello"
+		});
+
+		entity.Set(new TestCompB()
+		{
+			Value = "World"
+		});
+		
+		ref TestCompA c = ref entity.Get<TestCompA>();
+		Assert.IsTrue(c.Value.Equals("Hello"));
+		Assert.IsTrue(entity.Get<TestCompB>().Value.Equals("World"));
 	}
 }

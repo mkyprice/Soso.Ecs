@@ -15,20 +15,17 @@ namespace SosoEcs.Components.Core
 		private readonly Dictionary<Entity, int> _entityIndicies = new Dictionary<Entity, int>();
 		private readonly Array[] _components;
 		private readonly Dictionary<Type, int> _componentsIndicies = new Dictionary<Type, int>();
-		private readonly HashSet<Type> _types;
-		private readonly int _hash;
+		public readonly HashSet<Type> Types;
 
-		public Archetype(params Type[] types)
+		public Archetype(IEnumerable<Type> types)
 		{
-			if (types.Length <= 0) throw new Exception($"Archetype cannot be created with no types");
-
-			_types = new HashSet<Type>(types);
-			_hash = TypeExtensions.GetHash(types);
-			_components = new Array[types.Length];
+			Type[] typeArray = types.ToArray();
+			Types = new HashSet<Type>(types);
+			_components = new Array[typeArray.Length];
 			for (int i = 0; i < _components.Length; i++)
 			{
-				_components[i] = Array.CreateInstance(types[i], Length);
-				_componentsIndicies[types[i]] = i;
+				_components[i] = Array.CreateInstance(typeArray[i], Length);
+				_componentsIndicies[typeArray[i]] = i;
 			}
 		}
 
@@ -45,12 +42,6 @@ namespace SosoEcs.Components.Core
 
 			_entityIndicies[entity] = Size;
 
-			if (components.Length != _components.Length)
-			{
-				Console.WriteLine("WARNING: tried to add entity to archetype with wrong number of components");
-				return false;
-			}
-
 			if (Size >= Length) Resize(Length * 2);
 
 			foreach (object component in components)
@@ -62,13 +53,25 @@ namespace SosoEcs.Components.Core
 			return true;
 		}
 
-		public bool Has<T>() => _types.Contains(typeof(T));
-		public bool Is(Type[] types)
+		public void MoveTo(Entity entity, Archetype archetype)
 		{
-			if (types.Length != _types.Count) return false;
-			foreach (Type type in types)
+			int entityIndex = _entityIndicies[entity];
+			foreach (Array t in _components)
 			{
-				if (_types.Contains(type) == false) return false;
+				object component = t.GetValue(entityIndex);
+				archetype.SetComponents(entity, component);
+			}
+			Remove(entity);
+		}
+
+		public bool Has<T>() => Types.Contains(typeof(T));
+		public bool Has(in Type type) => Types.Contains(type);
+		public bool Is(params object[] components)
+		{
+			if (components.Length > Types.Count) return false;
+			foreach (object component in components)
+			{
+				if (Types.Contains(component.GetType()) == false) return false;
 			}
 			return true;
 		}
@@ -113,7 +116,5 @@ namespace SosoEcs.Components.Core
 		public ref T Get<T>(int index) => ref GetArray<T>()[index];
 
 		public T[] GetArray<T>() => Unsafe.As<T[]>(_components[_componentsIndicies[typeof(T)]]);
-
-		public override int GetHashCode() => _hash;
 	}
 }

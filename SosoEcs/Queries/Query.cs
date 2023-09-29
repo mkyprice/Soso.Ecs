@@ -2,8 +2,8 @@
 {
 	public class Query
 	{
-		private readonly List<Type> _with = new List<Type>();
-		private readonly List<Type> _none = new List<Type>();
+		private readonly HashSet<Type> _with = new HashSet<Type>();
+		private readonly HashSet<Type> _none = new HashSet<Type>();
 
 		public Query With<T>()
 		{
@@ -16,6 +16,8 @@
 			_none.Add(typeof(T));
 			return this;
 		}
+
+		public IEnumerable<Type> GetTypes() => _with.Except(_none);
 
 		public void DoQuery(World world, Span<Entity> entities, int start = 0)
 		{

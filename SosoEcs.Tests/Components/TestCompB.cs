@@ -1,6 +1,6 @@
 ﻿namespace SosoEcs.Tests.Components
 {
-	public struct TestComp
+	public struct TestCompB
 	{
 		public string Value;
 	}

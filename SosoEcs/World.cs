@@ -1,6 +1,7 @@
 ﻿using SosoEcs.Components.Core;
 using SosoEcs.Components.Extensions;
 using SosoEcs.Queries;
+using SosoEcs.Systems;
 
 namespace SosoEcs
 {
@@ -13,6 +14,8 @@ namespace SosoEcs
 		{
 			Entity entity = new Entity(this);
 
+			_entities[entity] = new Archetype(Array.Empty<Type>());
+			_entities[entity].SetComponents(entity);
 			SetComponents(entity, components);
 
 			return entity;
@@ -21,20 +24,27 @@ namespace SosoEcs
 		public void SetComponents(Entity entity, params object[] components)
 		{
 			if (components.Length <= 0) return;
-
-			Type[] types = new Type[components.Length]; // TODO: Static array
-			for (int i = 0; i < components.Length; i++)
+			
+			Archetype entityArchetype = _entities[entity];
+			if (entityArchetype.Is(components) == false)
 			{
-				types[i] = components[i].GetType();
+				// Create or find archetype
+				HashSet<Type> types = new HashSet<Type>(entityArchetype.Types);
+				for (int i = 0; i < components.Length; i++)
+				{
+					types.Add(components[i].GetType());
+				}
+				Archetype archetype = GetOrCreateArchetype(types);
+				entityArchetype.MoveTo(entity, archetype);
+				entityArchetype = archetype;
+				_entities[entity] = archetype;
 			}
-			Archetype archetype = GetOrCreateArchetype(types);
-			archetype.SetComponents(entity, components);
-			_entities[entity] = archetype;
+			entityArchetype.SetComponents(entity, components);
 		}
 
 		public ref T GetComponent<T>(Entity entity) => ref _entities[entity].Get<T>(entity);
 
-		private Archetype GetOrCreateArchetype(Type[] types)
+		private Archetype GetOrCreateArchetype(IEnumerable<Type> types)
 		{
 			foreach (Archetype archetype in Archetypes)
 			{
@@ -43,6 +53,17 @@ namespace SosoEcs
 			Archetype newArch = new Archetype(types);
 			Archetypes.Add(newArch);
 			return newArch;
+		}
+
+		public void Query<T>(in Query query) where T : ISystem, new()
+		{
+			T system = new T(); 
+			var types = query.GetTypes();
+			Archetype archetype = GetOrCreateArchetype(types);
+			for (int i = 0; i < archetype.Size; i++)
+			{
+				// TODO: Execute job
+			}
 		}
 
 		public void GetEntities(in Query query, Span<Entity> entities, int start = 0)
