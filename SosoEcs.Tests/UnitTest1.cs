@@ -1,4 +1,5 @@
 using SosoEcs.Tests.Components;
+using SosoEcs.Tests.Systems;
 using System.Diagnostics;
 
 namespace SosoEcs.Tests;
@@ -43,5 +44,21 @@ public class Tests
 		ref TestCompA c = ref entity.Get<TestCompA>();
 		Assert.IsTrue(c.Value.Equals("Hello"));
 		Assert.IsTrue(entity.Get<TestCompB>().Value.Equals("World"));
+	}
+
+	[Test]
+	public void SystemsTest0()
+	{
+		Entity entity = World.CreateEntity(new TestCompA()
+		{
+			Value = "Hello"
+		});
+		
+		entity.Set(new TestCompB()
+		{
+			Value = "World"
+		});
+		
+		World.Run<TestSystemA, TestCompA, TestCompB>();
 	}
 }

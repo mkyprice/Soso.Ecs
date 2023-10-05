@@ -1,11 +1,9 @@
 ﻿using SosoEcs.Components.Core;
-using SosoEcs.Components.Extensions;
 using SosoEcs.Queries;
-using SosoEcs.Systems;
 
 namespace SosoEcs
 {
-	public class World
+	public partial class World
 	{
 		private readonly Dictionary<Entity, Archetype> _entities = new Dictionary<Entity, Archetype>();
 		private readonly List<Archetype> Archetypes = new List<Archetype>();
@@ -26,7 +24,7 @@ namespace SosoEcs
 			if (components.Length <= 0) return;
 			
 			Archetype entityArchetype = _entities[entity];
-			if (entityArchetype.Is(components) == false)
+			if (entityArchetype.Is(components.GetType()) == false)
 			{
 				// Create or find archetype
 				HashSet<Type> types = new HashSet<Type>(entityArchetype.Types);
@@ -44,6 +42,7 @@ namespace SosoEcs
 
 		public ref T GetComponent<T>(Entity entity) => ref _entities[entity].Get<T>(entity);
 
+		private Archetype GetOrCreateArchetype(params Type[] types) => GetOrCreateArchetype(types as IEnumerable<Type>);
 		private Archetype GetOrCreateArchetype(IEnumerable<Type> types)
 		{
 			foreach (Archetype archetype in Archetypes)
@@ -53,17 +52,6 @@ namespace SosoEcs
 			Archetype newArch = new Archetype(types);
 			Archetypes.Add(newArch);
 			return newArch;
-		}
-
-		public void Query<T>(in Query query) where T : ISystem, new()
-		{
-			T system = new T(); 
-			var types = query.GetTypes();
-			Archetype archetype = GetOrCreateArchetype(types);
-			for (int i = 0; i < archetype.Size; i++)
-			{
-				// TODO: Execute job
-			}
 		}
 
 		public void GetEntities(in Query query, Span<Entity> entities, int start = 0)

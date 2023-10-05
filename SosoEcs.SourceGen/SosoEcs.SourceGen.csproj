@@ -4,12 +4,14 @@
         <TargetFramework>net6.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <LangVersion>preview</LangVersion>
     </PropertyGroup>
 
-
     <ItemGroup>
-        <ProjectReference Include="../SosoEcs.SourceGen/SosoEcs.SourceGen.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false"/>
+      <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.8.0-2.final" />
+      <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
     </ItemGroup>
+
 
 
 </Project>

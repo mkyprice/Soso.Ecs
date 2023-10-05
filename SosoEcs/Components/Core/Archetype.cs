@@ -66,12 +66,12 @@ namespace SosoEcs.Components.Core
 
 		public bool Has<T>() => Types.Contains(typeof(T));
 		public bool Has(in Type type) => Types.Contains(type);
-		public bool Is(params object[] components)
+		public bool Is(params Type[] components) => Is(components as IEnumerable<Type>);
+		public bool Is(IEnumerable<Type> components)
 		{
-			if (components.Length > Types.Count) return false;
-			foreach (object component in components)
+			foreach (Type component in components)
 			{
-				if (Types.Contains(component.GetType()) == false) return false;
+				if (Types.Contains(component) == false) return false;
 			}
 			return true;
 		}
@@ -114,6 +114,7 @@ namespace SosoEcs.Components.Core
 		
 		public ref T Get<T>(Entity entity) => ref GetArray<T>()[_entityIndicies[entity]];
 		public ref T Get<T>(int index) => ref GetArray<T>()[index];
+		public ref object Get(int index, Type type) => ref Unsafe.As<object[]>(_components[_componentsIndicies[type]])[index];
 
 		public T[] GetArray<T>() => Unsafe.As<T[]>(_components[_componentsIndicies[typeof(T)]]);
 	}
