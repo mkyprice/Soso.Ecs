@@ -6,7 +6,7 @@ namespace SosoEcs
 	public partial class World
 	{
 		private readonly Dictionary<Entity, Archetype> _entities = new Dictionary<Entity, Archetype>();
-		private readonly List<Archetype> Archetypes = new List<Archetype>();
+		private readonly List<Archetype> _archetypes = new List<Archetype>();
 		
 		public Entity CreateEntity(params object[] components)
 		{
@@ -45,18 +45,13 @@ namespace SosoEcs
 		private Archetype GetOrCreateArchetype(params Type[] types) => GetOrCreateArchetype(types as IEnumerable<Type>);
 		private Archetype GetOrCreateArchetype(IEnumerable<Type> types)
 		{
-			foreach (Archetype archetype in Archetypes)
+			foreach (Archetype archetype in _archetypes)
 			{
 				if (archetype.Is(types)) return archetype;
 			}
 			Archetype newArch = new Archetype(types);
-			Archetypes.Add(newArch);
+			_archetypes.Add(newArch);
 			return newArch;
-		}
-
-		public void GetEntities(in Query query, Span<Entity> entities, int start = 0)
-		{
-			query.DoQuery(this, entities, start);
 		}
 	}
 }

@@ -49,15 +49,18 @@ public class Tests
 	[Test]
 	public void SystemsTest0()
 	{
-		Entity entity = World.CreateEntity(new TestCompA()
+		for (int i = 0; i < 100; i++)
 		{
-			Value = "Hello"
-		});
+			Entity entity = World.CreateEntity(new TestCompA()
+			{
+				Value = $"Hello{i}"
+			});
 		
-		entity.Set(new TestCompB()
-		{
-			Value = "World"
-		});
+			entity.Set(new TestCompB()
+			{
+				Value = "World"
+			});
+		}
 		
 		World.Run<TestSystemA, TestCompA, TestCompB>();
 	}
