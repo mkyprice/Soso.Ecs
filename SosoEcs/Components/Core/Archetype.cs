@@ -110,7 +110,8 @@ namespace SosoEcs.Components.Core
 			foreach (var comp in _componentsIndicies)
 			{
 				Array tmp = Array.CreateInstance(comp.Key, Length);
-				Buffer.BlockCopy(_components[comp.Value], 0, tmp, 0, _components[comp.Value].Length);
+				Array src = _components[comp.Value];
+				Array.Copy(src, tmp, src.Length);
 				_components[comp.Value] = tmp;
 			}
 		}
