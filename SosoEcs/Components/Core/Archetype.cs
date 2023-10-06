@@ -1,5 +1,7 @@
-﻿using SosoEcs.Components.Extensions;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Runtime.CompilerServices;
 
 namespace SosoEcs.Components.Core
@@ -10,6 +12,7 @@ namespace SosoEcs.Components.Core
 	/// </summary>
 	public class Archetype
 	{
+		public static readonly Archetype Empty = new Archetype(Array.Empty<Type>());
 		public int Size { get; private set; }
 		private int Length = 64;
 		private readonly Dictionary<Entity, int> _entityIndicies = new Dictionary<Entity, int>();

@@ -6,6 +6,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SosoEcs", "SosoEcs\SosoEcs.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SosoEcs.SourceGen", "SosoEcs.SourceGen\SosoEcs.SourceGen.csproj", "{1AED6210-513D-4259-BFA3-B0AB6C8AE915}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SosoEcs.Benchmarks", "SosoEcs.Benchmarks\SosoEcs.Benchmarks.csproj", "{9745F1E3-D7E9-4D33-956F-F27EB94BBF9E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +26,9 @@ Global
 		{1AED6210-513D-4259-BFA3-B0AB6C8AE915}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1AED6210-513D-4259-BFA3-B0AB6C8AE915}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1AED6210-513D-4259-BFA3-B0AB6C8AE915}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9745F1E3-D7E9-4D33-956F-F27EB94BBF9E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9745F1E3-D7E9-4D33-956F-F27EB94BBF9E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9745F1E3-D7E9-4D33-956F-F27EB94BBF9E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9745F1E3-D7E9-4D33-956F-F27EB94BBF9E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

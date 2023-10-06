@@ -1,4 +1,5 @@
-﻿using SosoEcs.Systems;
+﻿
+using SosoEcs.Systems;
 using SosoEcs.Tests.Components;
 
 namespace SosoEcs.Tests.Systems

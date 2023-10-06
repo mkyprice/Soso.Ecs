@@ -1,5 +1,6 @@
 ﻿using SosoEcs.Components.Core;
-using SosoEcs.Queries;
+using System;
+using System.Collections.Generic;
 
 namespace SosoEcs
 {
@@ -12,7 +13,7 @@ namespace SosoEcs
 		{
 			Entity entity = new Entity(this);
 
-			_entities[entity] = new Archetype(Array.Empty<Type>());
+			_entities[entity] = Archetype.Empty;
 			_entities[entity].SetComponents(entity);
 			SetComponents(entity, components);
 
