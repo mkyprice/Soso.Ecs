@@ -6,18 +6,11 @@ namespace SosoEcs.Tests;
 
 public class Tests
 {
-	private World World;
-	
-	[SetUp]
-	public void Setup()
-	{
-		World = new World();
-	}
-
 	[Test]
-	public void Test1()
+	public void SetValue()
 	{
-		Entity entity = World.CreateEntity(new TestCompA()
+		World world = new World();
+		Entity entity = world.CreateEntity(new TestCompA()
 		{
 			Value = "Hello"
 		});
@@ -29,9 +22,10 @@ public class Tests
 	}
 
 	[Test]
-	public void Test2()
+	public void MultipleComponents()
 	{
-		Entity entity = World.CreateEntity(new TestCompA()
+		World world = new World();
+		Entity entity = world.CreateEntity(new TestCompA()
 		{
 			Value = "Hello"
 		});
@@ -49,9 +43,10 @@ public class Tests
 	[Test]
 	public void SystemsTest0()
 	{
+		World world = new World();
 		for (int i = 0; i < 100; i++)
 		{
-			Entity entity = World.CreateEntity(new TestCompA()
+			Entity entity = world.CreateEntity(new TestCompA()
 			{
 				Value = $"Hello{i}"
 			});
@@ -62,6 +57,18 @@ public class Tests
 			});
 		}
 		
-		World.Run<TestSystemA, TestCompA, TestCompB>();
+		world.Run<TestSystemA, TestCompA, TestCompB>();
+	}
+
+	[Test]
+	public void ComponentSystemNotFound()
+	{
+		World world = new World();
+		world.CreateEntity(new TestCompA()
+		{
+			Value = $"Hello"
+		});
+		
+		world.Run<TestSystemA, TestCompA, TestCompB>();
 	}
 }

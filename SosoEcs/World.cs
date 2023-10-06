@@ -25,7 +25,7 @@ namespace SosoEcs
 			if (components.Length <= 0) return;
 			
 			Archetype entityArchetype = _entities[entity];
-			if (entityArchetype.Is(components.GetType()) == false)
+			if (entityArchetype.IsComponents(components) == false)
 			{
 				// Create or find archetype
 				HashSet<Type> types = new HashSet<Type>(entityArchetype.Types);

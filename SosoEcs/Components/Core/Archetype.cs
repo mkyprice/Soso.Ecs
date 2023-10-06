@@ -69,6 +69,20 @@ namespace SosoEcs.Components.Core
 
 		public bool Has<T>() => Types.Contains(typeof(T));
 		public bool Has(in Type type) => Types.Contains(type);
+		
+		/// <summary>
+		/// Same as As but uses component objects rather than type
+		/// </summary>
+		/// <param name="components"></param>
+		/// <returns></returns>
+		public bool IsComponents(params object[] components)
+		{
+			foreach (object component in components)
+			{
+				if (Types.Contains(component.GetType()) == false) return false;
+			}
+			return true;
+		}
 		public bool Is(params Type[] components) => Is(components as IEnumerable<Type>);
 		public bool Is(IEnumerable<Type> components)
 		{
