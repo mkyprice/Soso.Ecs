@@ -10,7 +10,7 @@ namespace SosoEcs.Components.Core
 	/// Archetype is a data structure that holds all entities that
 	/// have the same components
 	/// </summary>
-	public class Archetype
+	internal class Archetype
 	{
 		public static readonly Archetype Empty = new Archetype(Array.Empty<Type>());
 		public int Size { get; private set; }

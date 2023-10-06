@@ -16,10 +16,16 @@ namespace SosoEcs.SourceGen
 			context.RegisterPostInitializationOutput(ctx =>
 			{
 				StringBuilder systems = FileInitalizer.Init().CreateSystems(QUANTITY);
-				StringBuilder runners = FileInitalizer.Init().CreateSystemRunners(QUANTITY);
+				StringBuilder runners = FileInitalizer.Init()
+					.AppendSystemRunnersUsings()
+					.AppendLine("public partial class World")
+					.AppendLine("{")
+					.CreateSystemRunners(QUANTITY)
+					.CreateSystemRunnersRef(QUANTITY)
+					.AppendLine("}");
 				
-				ctx.AddSource("ISystem.g", systems.ParseCS());
-				ctx.AddSource("Systems.g", runners.ParseCS());
+				ctx.AddSource("ISystem.g", systems.ParseCs());
+				ctx.AddSource("Systems.g", runners.ParseCs());
 			});
 		}
 	}

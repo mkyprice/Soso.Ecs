@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 
 namespace SosoEcs.Components.Extensions
 {
-	public static class TypeExtensions
+	internal static class TypeExtensions
 	{
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static int GetHash(Type[] types)

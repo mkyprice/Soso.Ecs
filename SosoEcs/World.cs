@@ -1,6 +1,7 @@
 ﻿using SosoEcs.Components.Core;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace SosoEcs
 {
@@ -43,14 +44,28 @@ namespace SosoEcs
 
 		public ref T GetComponent<T>(Entity entity) => ref _entities[entity].Get<T>(entity);
 
+		public bool Remove<T>(Entity entity)
+		{
+			Archetype archetype = _entities[entity];
+			HashSet<Type> types = archetype.Types;
+			types.Remove(typeof(T));
+			Archetype newArch = GetOrCreateArchetype(types);
+			archetype.MoveTo(entity, newArch);
+			_entities[entity] = newArch;
+			return true;
+		}
+
+		public bool Contains<T>(Entity entity) => _entities[entity].Has<T>();
+
 		private Archetype GetOrCreateArchetype(params Type[] types) => GetOrCreateArchetype(types as IEnumerable<Type>);
 		private Archetype GetOrCreateArchetype(IEnumerable<Type> types)
 		{
+			Type[] typeArray = types as Type[] ?? types.ToArray();
 			foreach (Archetype archetype in _archetypes)
 			{
-				if (archetype.Is(types)) return archetype;
+				if (archetype.Is(typeArray)) return archetype;
 			}
-			Archetype newArch = new Archetype(types);
+			Archetype newArch = new Archetype(typeArray);
 			_archetypes.Add(newArch);
 			return newArch;
 		}

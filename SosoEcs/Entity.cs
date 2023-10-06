@@ -18,8 +18,8 @@
 
 		public void Set<T>(T component) => World.SetComponents(this, component);
 		public ref T Get<T>() => ref World.GetComponent<T>(this);
-		// public bool Contains<T>() => World.Library.Contains<T>(this);
-		// public bool Remove<T>() => World.Library.Remove<T>(this);
+		public bool Contains<T>() => World.Contains<T>(this);
+		public bool Remove<T>() => World.Remove<T>(this);
 
 		#endregion
 

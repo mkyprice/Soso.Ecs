@@ -1,6 +1,5 @@
 using SosoEcs.Tests.Components;
 using SosoEcs.Tests.Systems;
-using System.Diagnostics;
 
 namespace SosoEcs.Tests;
 
@@ -38,6 +37,30 @@ public class Tests
 		ref TestCompA c = ref entity.Get<TestCompA>();
 		Assert.IsTrue(c.Value.Equals("Hello"));
 		Assert.IsTrue(entity.Get<TestCompB>().Value.Equals("World"));
+	}
+
+	[Test]
+	public void RemoveTest()
+	{
+		World world = new World();
+		Entity entity = world.CreateEntity(new TestCompA()
+		{
+			Value = "Hello"
+		});
+
+		entity.Set(new TestCompB()
+		{
+			Value = "World"
+		});
+		
+		ref TestCompA c = ref entity.Get<TestCompA>();
+		Assert.IsTrue(c.Value.Equals("Hello"));
+		Assert.IsTrue(entity.Get<TestCompB>().Value.Equals("World"));
+
+		entity.Remove<TestCompA>();
+		
+		Assert.IsFalse(entity.Contains<TestCompA>());
+		Assert.IsTrue(entity.Contains<TestCompB>());
 	}
 
 	[Test]

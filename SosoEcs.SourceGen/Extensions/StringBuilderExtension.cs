@@ -6,7 +6,7 @@ namespace SosoEcs.SourceGen.Extensions
 {
 	public static class StringBuilderExtension
 	{
-		public static string ParseCS(this StringBuilder sb)
+		public static string ParseCs(this StringBuilder sb)
 		{
 			return CSharpSyntaxTree.ParseText(sb.ToString()).GetRoot().NormalizeWhitespace().ToFullString();
 		}
