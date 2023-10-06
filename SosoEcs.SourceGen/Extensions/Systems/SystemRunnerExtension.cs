@@ -10,6 +10,9 @@ namespace SosoEcs.SourceGen.Extensions.Systems
 			sb.AppendLine($"using {Namespaces.ISYSTEMS};");
 			sb.AppendLine($"using {Namespaces.COMPONENTS_CORE};");
 			sb.AppendLine($"using {Namespaces.QUERIES};");
+			sb.AppendLine($"using System.Collections.Generic;");
+			sb.AppendLine($"using System;");
+			sb.AppendLine($"using System.Linq;");
 			sb.AppendLine($"namespace {Namespaces.BASE};");
 			return sb;
 		}
@@ -28,8 +31,7 @@ namespace SosoEcs.SourceGen.Extensions.Systems
 				
 				sb.AppendLine($"public void Run<TS, {interfaceGenerics}>(ref TS system) where TS : struct, ISystem<{interfaceGenerics}>");
 				sb.AppendLine("{");
-				sb.AppendArchetype(archetypeGetGenerics.ToString());
-				sb.AppendSystemRunnerLoop(updateGenerics.ToString());
+				sb.AppendSystemRunnerLoop(updateGenerics.ToString(), archetypeGetGenerics.ToString());
 				sb.AppendLine("}");
 				
 
@@ -56,8 +58,7 @@ namespace SosoEcs.SourceGen.Extensions.Systems
 				sb.AppendLine("{");
 				sb.AppendLine("var system = new TS();");
 				
-				sb.AppendArchetype(archetypeGetGenerics.ToString());
-				sb.AppendSystemRunnerLoop(updateGenerics.ToString());
+				sb.AppendSystemRunnerLoop(updateGenerics.ToString(), archetypeGetGenerics.ToString());
 				
 				sb.AppendLine("}");
 				
@@ -70,18 +71,15 @@ namespace SosoEcs.SourceGen.Extensions.Systems
 			return sb;
 		}
 
-		private static StringBuilder AppendSystemRunnerLoop(this StringBuilder sb, string updateGenerics)
+		private static StringBuilder AppendSystemRunnerLoop(this StringBuilder sb, string updateGenerics, string archetypeGetGenerics)
 		{
+			sb.AppendLine($"foreach (var archetype in GetArchetypes({archetypeGetGenerics}))");
+			sb.AppendLine("{");
 			sb.AppendLine("for (int i = 0; i < archetype.Size; i++)");
 			sb.AppendLine("{");
 			sb.AppendLine($"system.Update({updateGenerics});");
 			sb.AppendLine("}");
-			return sb;
-		}
-
-		private static StringBuilder AppendArchetype(this StringBuilder sb, string archetypeGetGenerics)
-		{
-			sb.AppendLine($"Archetype archetype = GetOrCreateArchetype({archetypeGetGenerics});");
+			sb.AppendLine("}");
 			return sb;
 		}
 	}

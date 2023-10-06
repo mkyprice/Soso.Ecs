@@ -14,7 +14,7 @@ namespace SosoEcs.Components.Core
 	{
 		public static readonly Archetype Empty = new Archetype(Array.Empty<Type>());
 		public int Size { get; private set; }
-		private int Length = 64;
+		private int _length = 256;
 		private readonly Dictionary<Entity, int> _entityIndicies = new Dictionary<Entity, int>();
 		private readonly Array[] _components;
 		private readonly Dictionary<Type, int> _componentsIndicies = new Dictionary<Type, int>();
@@ -27,7 +27,7 @@ namespace SosoEcs.Components.Core
 			_components = new Array[typeArray.Length];
 			for (int i = 0; i < _components.Length; i++)
 			{
-				_components[i] = Array.CreateInstance(typeArray[i], Length);
+				_components[i] = Array.CreateInstance(typeArray[i], _length);
 				_componentsIndicies[typeArray[i]] = i;
 			}
 		}
@@ -45,7 +45,7 @@ namespace SosoEcs.Components.Core
 
 			_entityIndicies[entity] = Size;
 
-			if (Size >= Length) Resize(Length * 2);
+			if (Size >= _length) Resize(_length * 2);
 
 			foreach (object component in components)
 			{
@@ -69,6 +69,14 @@ namespace SosoEcs.Components.Core
 
 		public bool Has<T>() => Types.Contains(typeof(T));
 		public bool Has(in Type type) => Types.Contains(type);
+		public bool Has(in Type[] types)
+		{
+			foreach (Type type in types)
+			{
+				if (Types.Contains(type) == false) return false;
+			}
+			return true;
+		}
 		
 		/// <summary>
 		/// Same as As but uses component objects rather than type
@@ -119,11 +127,11 @@ namespace SosoEcs.Components.Core
 
 		private void Resize(int length)
 		{
-			Length = length;
-			Console.WriteLine("Resizing archetype arrays to {0}", Length);
+			_length = length;
+			Console.WriteLine("Resizing archetype arrays to {0}", _length);
 			foreach (var comp in _componentsIndicies)
 			{
-				Array tmp = Array.CreateInstance(comp.Key, Length);
+				Array tmp = Array.CreateInstance(comp.Key, _length);
 				Array src = _components[comp.Value];
 				Array.Copy(src, tmp, src.Length);
 				_components[comp.Value] = tmp;
@@ -132,8 +140,6 @@ namespace SosoEcs.Components.Core
 		
 		public ref T Get<T>(Entity entity) => ref GetArray<T>()[_entityIndicies[entity]];
 		public ref T Get<T>(int index) => ref GetArray<T>()[index];
-		public ref object Get(int index, Type type) => ref Unsafe.As<object[]>(_components[_componentsIndicies[type]])[index];
-
 		public T[] GetArray<T>() => Unsafe.As<T[]>(_components[_componentsIndicies[typeof(T)]]);
 	}
 }

@@ -1,4 +1,6 @@
-﻿using SosoEcs.Components.Core;
+﻿
+using SosoEcs.Components.Core;
+using SosoEcs.Components.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -57,8 +59,12 @@ namespace SosoEcs
 
 		public bool Contains<T>(Entity entity) => _entities[entity].Has<T>();
 
-		private Archetype GetOrCreateArchetype(params Type[] types) => GetOrCreateArchetype(types as IEnumerable<Type>);
-		private Archetype GetOrCreateArchetype(IEnumerable<Type> types)
+		/// <summary>
+		/// Gets or creates exact archetype with given types
+		/// </summary>
+		/// <param name="types"></param>
+		/// <returns></returns>
+		internal Archetype GetOrCreateArchetype(IEnumerable<Type> types)
 		{
 			Type[] typeArray = types as Type[] ?? types.ToArray();
 			foreach (Archetype archetype in _archetypes)
@@ -68,6 +74,19 @@ namespace SosoEcs
 			Archetype newArch = new Archetype(typeArray);
 			_archetypes.Add(newArch);
 			return newArch;
+		}
+
+		/// <summary>
+		/// Yields enumerable of all archetypes with requests types
+		/// </summary>
+		/// <param name="types"></param>
+		/// <returns></returns>
+		private IEnumerable<Archetype> GetArchetypes(params Type[] types)
+		{
+			foreach (Archetype archetype in _archetypes)
+			{
+				if (archetype.Has(types)) yield return archetype;
+			}
 		}
 	}
 }
