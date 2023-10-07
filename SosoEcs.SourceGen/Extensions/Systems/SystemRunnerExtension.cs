@@ -21,23 +21,20 @@ namespace SosoEcs.SourceGen.Extensions.Systems
 		{
 			StringBuilder interfaceGenerics = new StringBuilder();
 			StringBuilder archetypeGetGenerics = new StringBuilder();
-			StringBuilder updateGenerics = new StringBuilder();
 			for (int i = 0; i < amount; i++)
 			{
 				string generic = "T" + i;
 				interfaceGenerics.Append(generic);
 				archetypeGetGenerics.Append($"typeof({generic})");
-				updateGenerics.Append($"ref archetype.Get<T{i}>(i)");
 				
 				sb.AppendLine($"public void Run<TS, {interfaceGenerics}>(ref TS system) where TS : struct, ISystem<{interfaceGenerics}>");
 				sb.AppendLine("{");
-				sb.AppendSystemRunnerLoop(updateGenerics.ToString(), archetypeGetGenerics.ToString());
+				sb.AppendSystemRunnerLoop(i);
 				sb.AppendLine("}");
 				
 
 				interfaceGenerics.Append(", ");
 				archetypeGetGenerics.Append(", ");
-				updateGenerics.Append(", ");
 			}
 			return sb;
 		}
@@ -46,38 +43,50 @@ namespace SosoEcs.SourceGen.Extensions.Systems
 		{
 			StringBuilder interfaceGenerics = new StringBuilder();
 			StringBuilder archetypeGetGenerics = new StringBuilder();
-			StringBuilder updateGenerics = new StringBuilder();
 			for (int i = 0; i < amount; i++)
 			{
 				string generic = "T" + i;
 				interfaceGenerics.Append(generic);
 				archetypeGetGenerics.Append($"typeof({generic})");
-				updateGenerics.Append($"ref archetype.Get<T{i}>(i)");
 				
 				sb.AppendLine($"public void Run<TS, {interfaceGenerics}>() where TS : struct, ISystem<{interfaceGenerics}>");
 				sb.AppendLine("{");
 				sb.AppendLine("var system = new TS();");
 				
-				sb.AppendSystemRunnerLoop(updateGenerics.ToString(), archetypeGetGenerics.ToString());
+				sb.AppendSystemRunnerLoop(i);
 				
 				sb.AppendLine("}");
 				
 
 				interfaceGenerics.Append(", ");
 				archetypeGetGenerics.Append(", ");
-				updateGenerics.Append(", ");
 			}
 			
 			return sb;
 		}
 
-		private static StringBuilder AppendSystemRunnerLoop(this StringBuilder sb, string updateGenerics, string archetypeGetGenerics)
+		private static StringBuilder AppendSystemRunnerLoop(this StringBuilder sb, int amount)
 		{
-			sb.AppendLine($"foreach (var archetype in GetArchetypes({archetypeGetGenerics}))");
+			StringBuilder update = new StringBuilder();
+			StringBuilder archetypes = new StringBuilder();
+			StringBuilder arrays = new StringBuilder();
+			for (int i = 0; i <= amount; i++)
+			{
+				arrays.AppendLine($"T{i}[] t{i}s = archetype.GetArray<T{i}>();");
+				update.Append($"ref t{i}s[i]");
+				archetypes.Append($"typeof(T{i})");
+				if (i < amount)
+				{
+					update.Append(", ");
+					archetypes.Append(", ");
+				}
+			}
+			sb.AppendLine($"foreach (var archetype in GetArchetypes({archetypes}))");
 			sb.AppendLine("{");
+			sb.AppendLine(arrays.ToString());
 			sb.AppendLine("for (int i = 0; i < archetype.Size; i++)");
 			sb.AppendLine("{");
-			sb.AppendLine($"system.Update({updateGenerics});");
+			sb.AppendLine($"system.Update({update});");
 			sb.AppendLine("}");
 			sb.AppendLine("}");
 			return sb;

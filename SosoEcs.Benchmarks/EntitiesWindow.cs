@@ -51,28 +51,20 @@ namespace SosoEcs.Benchmarks
 
 			for (int i = 0; i < 1002; i++)
 			{
-				var entity = World.CreateEntity(
+				World.CreateEntity(
 					new Transform()
 					{
 						Position = new Vector2(Random.Shared.Next(720))
 					},
 					new Shape2D()
 					{
-						Width = 12,
-						Height = 12,
+						Width = 16,
+						Height = 16,
 						Tint = GetRandomColor()
 					},new RigidBody()
 					{
-						Velocity = new Vector2(Random.Shared.NextSingle(), Random.Shared.NextSingle()) / 8
+						Velocity = new Vector2(Random.Shared.NextSingle(), Random.Shared.NextSingle()) / 16
 					});
-				// if (i % 2 == 0)
-				// {
-				// 	entity.Set(
-				// 		new RigidBody()
-				// 		{
-				// 			Velocity = new Vector2(Random.Shared.NextSingle(), Random.Shared.NextSingle()) / 4
-				// 		});
-				// }
 			}
 		}
 		protected override void Unload()
@@ -87,7 +79,7 @@ namespace SosoEcs.Benchmarks
 			World.Run<Renderer, Transform, Shape2D>();
 		}
 
-		private static readonly Color[] RandomColors = new Color[]{ Color.RED, Color.BLUE, Color.GOLD, Color.GREEN, };
+		private static readonly Color[] RandomColors = new []{ Color.RED, Color.BLUE, Color.GOLD, Color.GREEN, };
 		private Color GetRandomColor() => RandomColors[Random.Shared.Next(RandomColors.Length - 1)];
 	}
 }

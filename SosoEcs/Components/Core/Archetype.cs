@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace SosoEcs.Components.Core
 {
@@ -138,8 +139,17 @@ namespace SosoEcs.Components.Core
 			}
 		}
 		
+		
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public ref T Get<T>(Entity entity) => ref GetArray<T>()[_entityIndicies[entity]];
+		
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public ref T Get<T>(int index) => ref GetArray<T>()[index];
+		
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public Span<T> GetSpan<T>() => GetArray<T>();
+		
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public T[] GetArray<T>() => Unsafe.As<T[]>(_components[_componentsIndicies[typeof(T)]]);
 	}
 }

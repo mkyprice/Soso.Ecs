@@ -9,7 +9,7 @@ namespace SosoEcs.SourceGen
 	[Generator]
 	public sealed class SystemsGenerator : IIncrementalGenerator
 	{
-		public const int QUANTITY = 10;
+		public const int QUANTITY = 20;
 		
 		public void Initialize(IncrementalGeneratorInitializationContext context)
 		{
