@@ -2,7 +2,7 @@
 
 namespace SosoEcs.Benchmarks.BadEcs
 {
-	public class BadEcsDemo : IDisposable
+	public class SlowEcsDemo : IDisposable
 	{
 		#region Public Functions
 

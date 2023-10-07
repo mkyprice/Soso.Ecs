@@ -26,6 +26,20 @@ namespace SosoEcs
 		}
 
 		/// <summary>
+		/// Destroy an entity and remove all components
+		/// </summary>
+		/// <param name="entity"></param>
+		/// <returns></returns>
+		public bool Destroy(Entity entity)
+		{
+			if (_entities.TryGetValue(entity, out var archetype) == false) return false;
+
+			_entities.Remove(entity);
+			archetype.Remove(entity);
+			return true;
+		}
+
+		/// <summary>
 		/// Set or add multiple components at once
 		/// </summary>
 		/// <param name="entity"></param>

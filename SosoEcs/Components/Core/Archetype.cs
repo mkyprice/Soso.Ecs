@@ -100,6 +100,7 @@ namespace SosoEcs.Components.Core
 			if (_entityIndicies.TryGetValue(entity, out int entityIndex) == false) return false;
 			Size--;
 
+			_entityIndicies.Remove(entity);
 			foreach (Array components in _components)
 			{
 				components.SetValue(components.GetValue(Size), entityIndex);

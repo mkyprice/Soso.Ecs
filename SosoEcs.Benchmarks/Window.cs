@@ -4,9 +4,10 @@ namespace SosoEcs.Benchmarks
 {
 	public abstract class Window
 	{
-		public Window(int width, int height, string title)
+		public static readonly int Width = 1280, Height = 720;
+		public Window(string title)
 		{
-			Raylib.InitWindow(width, height, title);
+			Raylib.InitWindow(Width, Height, title);
 		}
 
 		public void Run()

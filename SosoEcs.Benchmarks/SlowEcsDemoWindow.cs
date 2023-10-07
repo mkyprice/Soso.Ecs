@@ -5,7 +5,7 @@ using System.Numerics;
 
 namespace SosoEcs.Benchmarks
 {
-	public class BadWindow : Window
+	public class SlowEcsDemoWindow : Window
 	{
 		
 
@@ -28,32 +28,32 @@ namespace SosoEcs.Benchmarks
 		{
 			public override void Render()
 			{
-				foreach (var id in _ecs.EntitiesWith(typeof(Transform), typeof(Shape2D)))
+				foreach (var id in _ecs.EntitiesWith(typeof(Transform), typeof(RectShape2D)))
 				{
 					ref var t0 = ref _ecs.GetComponent<Transform>(id);
-					ref var t1 = ref _ecs.GetComponent<Shape2D>(id);
+					ref var t1 = ref _ecs.GetComponent<RectShape2D>(id);
 					Raylib.DrawRectangle((int)t0.Position.X, (int)t0.Position.Y, t1.Width, t1.Height, t1.Tint);
 				}
 			}
 		}
-		private static BadEcsDemo _ecs;
+		private static SlowEcsDemo _ecs;
 		
-		public BadWindow() : base(1280, 720, "Slow ECS")
+		public SlowEcsDemoWindow() : base("Slow ECS")
 		{
 		}
 		protected override void Load()
 		{
-			_ecs = new BadEcsDemo();
+			_ecs = new SlowEcsDemo();
 
-			for (int i = 0; i < 200000; i++)
+			for (int i = 0; i < 10_000; i++)
 			{
 				int entity = _ecs.CreateEntity(
 					);
 				_ecs.AddComponent(entity, new Transform()
 				{
-					Position = new Vector2(Random.Shared.Next(720))
+					Position = new Vector2(Random.Shared.Next(Width), Random.Shared.Next(Height))
 				});
-				_ecs.AddComponent(entity, new Shape2D()
+				_ecs.AddComponent(entity, new RectShape2D()
 				{
 					Width = 16,
 					Height = 16,
@@ -61,7 +61,7 @@ namespace SosoEcs.Benchmarks
 				});
 				_ecs.AddComponent(entity, new RigidBody()
 				{
-					Velocity = new Vector2(Random.Shared.NextSingle(), Random.Shared.NextSingle()) * 128
+					Velocity = new Vector2(Random.Shared.NextSingle(), Random.Shared.NextSingle()) * 256 - new Vector2(128)
 				});
 			}
 
