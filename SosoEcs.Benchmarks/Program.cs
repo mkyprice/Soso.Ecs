@@ -1,4 +1,4 @@
-﻿using SosoEcs.Benchmarks;
+﻿namespace SosoEcs.Benchmarks;
 
 class Program
 {

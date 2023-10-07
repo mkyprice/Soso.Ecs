@@ -20,8 +20,10 @@ namespace SosoEcs.SourceGen
 					.AppendSystemRunnersUsings()
 					.AppendLine("public partial class World")
 					.AppendLine("{")
-					.CreateSystemRunners(QUANTITY)
-					.CreateSystemRunnersRef(QUANTITY)
+					.CreateSystemRunners(false, QUANTITY)
+					.CreateSystemRunners(true, QUANTITY)
+					.CreateSystemRunnersRef(false, QUANTITY)
+					.CreateSystemRunnersRef(true, QUANTITY)
 					.AppendLine("}");
 				
 				ctx.AddSource("ISystem.g", systems.ParseCs());

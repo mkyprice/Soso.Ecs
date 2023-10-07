@@ -13,23 +13,25 @@ namespace SosoEcs.SourceGen.Extensions.Systems
 			sb.AppendLine($"using System.Collections.Generic;");
 			sb.AppendLine($"using System;");
 			sb.AppendLine($"using System.Linq;");
+			sb.AppendLine($"using System.Threading.Tasks;");
 			sb.AppendLine($"namespace {Namespaces.BASE};");
 			return sb;
 		}
 
-		public static StringBuilder CreateSystemRunnersRef(this StringBuilder sb, int amount)
+		public static StringBuilder CreateSystemRunnersRef(this StringBuilder sb, bool parallel, int amount)
 		{
 			StringBuilder interfaceGenerics = new StringBuilder();
 			StringBuilder archetypeGetGenerics = new StringBuilder();
+			string funcName = parallel ? "ParallelRun" : "Run";
 			for (int i = 0; i < amount; i++)
 			{
 				string generic = "T" + i;
 				interfaceGenerics.Append(generic);
 				archetypeGetGenerics.Append($"typeof({generic})");
 				
-				sb.AppendLine($"public void Run<TS, {interfaceGenerics}>(ref TS system) where TS : struct, ISystem<{interfaceGenerics}>");
+				sb.AppendLine($"public void {funcName}<TS, {interfaceGenerics}>(TS system) where TS : struct, ISystem<{interfaceGenerics}>");
 				sb.AppendLine("{");
-				sb.AppendSystemRunnerLoop(i);
+				sb.AppendSystemRunnerLoop(i, parallel);
 				sb.AppendLine("}");
 				
 
@@ -39,21 +41,22 @@ namespace SosoEcs.SourceGen.Extensions.Systems
 			return sb;
 		}
 		
-		public static StringBuilder CreateSystemRunners(this StringBuilder sb, int amount)
+		public static StringBuilder CreateSystemRunners(this StringBuilder sb, bool parallel, int amount)
 		{
 			StringBuilder interfaceGenerics = new StringBuilder();
 			StringBuilder archetypeGetGenerics = new StringBuilder();
+			string funcName = parallel ? "ParallelRun" : "Run";
 			for (int i = 0; i < amount; i++)
 			{
 				string generic = "T" + i;
 				interfaceGenerics.Append(generic);
 				archetypeGetGenerics.Append($"typeof({generic})");
 				
-				sb.AppendLine($"public void Run<TS, {interfaceGenerics}>() where TS : struct, ISystem<{interfaceGenerics}>");
+				sb.AppendLine($"public void {funcName}<TS, {interfaceGenerics}>() where TS : struct, ISystem<{interfaceGenerics}>");
 				sb.AppendLine("{");
 				sb.AppendLine("var system = new TS();");
 				
-				sb.AppendSystemRunnerLoop(i);
+				sb.AppendSystemRunnerLoop(i, parallel);
 				
 				sb.AppendLine("}");
 				
@@ -65,7 +68,7 @@ namespace SosoEcs.SourceGen.Extensions.Systems
 			return sb;
 		}
 
-		private static StringBuilder AppendSystemRunnerLoop(this StringBuilder sb, int amount)
+		private static StringBuilder AppendSystemRunnerLoop(this StringBuilder sb, int amount, bool parallel)
 		{
 			StringBuilder update = new StringBuilder();
 			StringBuilder archetypes = new StringBuilder();
@@ -84,10 +87,12 @@ namespace SosoEcs.SourceGen.Extensions.Systems
 			sb.AppendLine($"foreach (var archetype in GetArchetypes({archetypes}))");
 			sb.AppendLine("{");
 			sb.AppendLine(arrays.ToString());
-			sb.AppendLine("for (int i = 0; i < archetype.Size; i++)");
+			if (parallel) sb.AppendLine("Parallel.For(0, archetype.Size, i =>");
+			else sb.AppendLine("for (int i = 0; i < archetype.Size; i++)");
 			sb.AppendLine("{");
 			sb.AppendLine($"system.Update({update});");
 			sb.AppendLine("}");
+			if (parallel) sb.Append(");");
 			sb.AppendLine("}");
 			return sb;
 		}

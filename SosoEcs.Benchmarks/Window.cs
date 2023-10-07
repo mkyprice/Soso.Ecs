@@ -14,6 +14,7 @@ namespace SosoEcs.Benchmarks
 			Load();
 			while (Raylib.WindowShouldClose() == false)
 			{
+				Time.Update();
 				Update();
 				
 				Raylib.BeginDrawing();

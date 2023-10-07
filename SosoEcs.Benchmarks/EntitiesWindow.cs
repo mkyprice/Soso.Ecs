@@ -1,4 +1,5 @@
 ﻿using Raylib_cs;
+using SosoEcs.Benchmarks.Extensions;
 using SosoEcs.Systems;
 using System.Numerics;
 
@@ -22,7 +23,7 @@ namespace SosoEcs.Benchmarks
 	{
 		public void Update(ref Transform t0, ref RigidBody t1)
 		{
-			t0.Position += t1.Velocity;
+			t0.Position += t1.Velocity * Time.Dt;
 			if (t0.Position.X < 0 || t0.Position.X > EntitiesWindow.Width) t1.Velocity.X *= -1;
 			if (t0.Position.Y < 0 || t0.Position.Y > EntitiesWindow.Height) t1.Velocity.Y *= -1;
 		}
@@ -47,7 +48,7 @@ namespace SosoEcs.Benchmarks
 		{
 			Ecs = new World();
 
-			for (int i = 0; i < 10000; i++)
+			for (int i = 0; i < 500000; i++)
 			{
 				Ecs.CreateEntity(
 					new Transform()
@@ -58,10 +59,10 @@ namespace SosoEcs.Benchmarks
 					{
 						Width = 16,
 						Height = 16,
-						Tint = GetRandomColor()
+						Tint = ColorExtension.GetRandomColor()
 					},new RigidBody()
 					{
-						Velocity = new Vector2(Random.Shared.NextSingle(), Random.Shared.NextSingle()) / 16
+						Velocity = new Vector2(Random.Shared.NextSingle(), Random.Shared.NextSingle()) * 128
 					});
 			}
 		}
@@ -70,14 +71,11 @@ namespace SosoEcs.Benchmarks
 		}
 		protected override void Update()
 		{
-			Ecs.Run<Physics, Transform, RigidBody>();
+			Ecs.ParallelRun<Physics, Transform, RigidBody>();
 		}
 		protected override void Render()
 		{
 			Ecs.Run<Renderer, Transform, Shape2D>();
 		}
-
-		private static readonly Color[] RandomColors = new []{ Color.RED, Color.BLUE, Color.GOLD, Color.GREEN, };
-		private Color GetRandomColor() => RandomColors[Random.Shared.Next(RandomColors.Length - 1)];
 	}
 }
