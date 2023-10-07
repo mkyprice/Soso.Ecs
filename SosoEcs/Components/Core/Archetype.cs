@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 
 namespace SosoEcs.Components.Core
 {
@@ -15,16 +14,17 @@ namespace SosoEcs.Components.Core
 	{
 		public static readonly Archetype Empty = new Archetype(Array.Empty<Type>());
 		public int Size { get; private set; }
+		public readonly HashSet<Type> Types;
+		
 		private int _length = 256;
 		private readonly Dictionary<Entity, int> _entityIndicies = new Dictionary<Entity, int>();
 		private readonly Array[] _components;
 		private readonly Dictionary<Type, int> _componentsIndicies = new Dictionary<Type, int>();
-		public readonly HashSet<Type> Types;
 
 		public Archetype(IEnumerable<Type> types)
 		{
-			Type[] typeArray = types.ToArray();
-			Types = new HashSet<Type>(types);
+			Type[] typeArray = types as Type[] ?? types.ToArray();
+			Types = new HashSet<Type>(typeArray);
 			_components = new Array[typeArray.Length];
 			for (int i = 0; i < _components.Length; i++)
 			{
@@ -33,39 +33,17 @@ namespace SosoEcs.Components.Core
 			}
 		}
 
-		public bool SetComponents(Entity entity, params object[] components)
-		{
-			if (_entityIndicies.ContainsKey(entity))
-			{
-				foreach (object component in components)
-				{
-					Set(entity, component);
-				}
-				return true;
-			}
-
-			_entityIndicies[entity] = Size;
-
-			if (Size >= _length) Resize(_length * 2);
-
-			foreach (object component in components)
-			{
-				Set(entity, component);
-			}
-			
-			Size++;
-			return true;
-		}
-
 		public void MoveTo(Entity entity, Archetype archetype)
 		{
-			int entityIndex = _entityIndicies[entity];
-			foreach (Array t in _components)
+			if (_entityIndicies.TryGetValue(entity, out int entityIndex))
 			{
-				object component = t.GetValue(entityIndex);
-				archetype.SetComponents(entity, component);
+				foreach (Array t in _components)
+				{
+					object component = t.GetValue(entityIndex);
+					archetype.Set(entity, component);
+				}
+				Remove(entity);
 			}
-			Remove(entity);
 		}
 
 		public bool Has<T>() => Types.Contains(typeof(T));
@@ -102,11 +80,16 @@ namespace SosoEcs.Components.Core
 			return true;
 		}
 
-		private void Set(Entity entity, object component)
+		public void Set(Entity entity, object component)
 		{
 			Type type = component.GetType();
 			Debug.Assert(_componentsIndicies.ContainsKey(type), $"Archetype does not contain component type {type}");
-			Debug.Assert(_entityIndicies.ContainsKey(entity), $"Archetype does not contain component type {type}");
+			if (_entityIndicies.ContainsKey(entity) == false)
+			{
+				_entityIndicies[entity] = Size;
+				Size++;
+				if (Size >= _length) Resize(_length * 2);
+			}
 			int componentIndex = _componentsIndicies[type];
 			int entityIndex = _entityIndicies[entity];
 			_components[componentIndex].SetValue(component, entityIndex);

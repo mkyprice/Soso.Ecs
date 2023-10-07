@@ -38,20 +38,18 @@ namespace SosoEcs.Benchmarks
 	
 	public class EntitiesWindow : Window
 	{
-		private World World;
-		public static int Width, Height;
-		public EntitiesWindow(int width, int height, string title) : base(width, height, title)
+		private World Ecs;
+		public static readonly int Width = 1280, Height = 720;
+		public EntitiesWindow() : base(Width, Height, "Graphical Benchmark")
 		{
-			Width = width;
-			Height = height;
 		}
 		protected override void Load()
 		{
-			World = new World();
+			Ecs = new World();
 
-			for (int i = 0; i < 1002; i++)
+			for (int i = 0; i < 10000; i++)
 			{
-				World.CreateEntity(
+				Ecs.CreateEntity(
 					new Transform()
 					{
 						Position = new Vector2(Random.Shared.Next(720))
@@ -72,11 +70,11 @@ namespace SosoEcs.Benchmarks
 		}
 		protected override void Update()
 		{
-			World.Run<Physics, Transform, RigidBody>();
+			Ecs.Run<Physics, Transform, RigidBody>();
 		}
 		protected override void Render()
 		{
-			World.Run<Renderer, Transform, Shape2D>();
+			Ecs.Run<Renderer, Transform, Shape2D>();
 		}
 
 		private static readonly Color[] RandomColors = new []{ Color.RED, Color.BLUE, Color.GOLD, Color.GREEN, };

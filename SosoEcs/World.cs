@@ -1,6 +1,4 @@
-﻿
-using SosoEcs.Components.Core;
-using SosoEcs.Components.Extensions;
+﻿using SosoEcs.Components.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,18 +10,27 @@ namespace SosoEcs
 		private readonly Dictionary<Entity, Archetype> _entities = new Dictionary<Entity, Archetype>();
 		private readonly List<Archetype> _archetypes = new List<Archetype>();
 		
+		/// <summary>
+		/// Create a new entity with optional components
+		/// </summary>
+		/// <param name="components"></param>
+		/// <returns></returns>
 		public Entity CreateEntity(params object[] components)
 		{
 			Entity entity = new Entity(this);
 
 			_entities[entity] = Archetype.Empty;
-			_entities[entity].SetComponents(entity);
 			SetComponents(entity, components);
 
 			return entity;
 		}
 
-		public void SetComponents(Entity entity, params object[] components)
+		/// <summary>
+		/// Set or add multiple components at once
+		/// </summary>
+		/// <param name="entity"></param>
+		/// <param name="components"></param>
+		public void SetComponents(Entity entity, object[] components)
 		{
 			if (components.Length <= 0) return;
 			
@@ -36,28 +43,76 @@ namespace SosoEcs
 				{
 					types.Add(components[i].GetType());
 				}
-				Archetype archetype = GetOrCreateArchetype(types);
-				entityArchetype.MoveTo(entity, archetype);
-				entityArchetype = archetype;
-				_entities[entity] = archetype;
+				entityArchetype = MoveEntity(entity, types);
 			}
-			entityArchetype.SetComponents(entity, components);
+			foreach (object component in components)
+			{
+				entityArchetype.Set(entity, component);
+			}
 		}
 
+		/// <summary>
+		/// Set or add a component to an entity
+		/// </summary>
+		/// <param name="entity"></param>
+		/// <param name="component"></param>
+		public void SetComponent(Entity entity, object component)
+		{
+			Archetype archetype = _entities[entity];
+			Type type = component.GetType();
+			if (archetype.Has(type) == false)
+			{
+				// Create or find archetype
+				HashSet<Type> types = new HashSet<Type>(archetype.Types);
+				types.Add(type);
+				archetype = MoveEntity(entity, types);
+			}
+			archetype.Set(entity, component);
+		}
+
+		/// <summary>
+		/// Get ref to a component. Must ensure component exists
+		/// </summary>
+		/// <param name="entity"></param>
+		/// <typeparam name="T"></typeparam>
+		/// <returns></returns>
 		public ref T GetComponent<T>(Entity entity) => ref _entities[entity].Get<T>(entity);
 
-		public bool Remove<T>(Entity entity)
+		/// <summary>
+		/// Remove a component from an entity
+		/// </summary>
+		/// <param name="entity"></param>
+		/// <typeparam name="T"></typeparam>
+		public void Remove<T>(Entity entity)
 		{
 			Archetype archetype = _entities[entity];
 			HashSet<Type> types = archetype.Types;
 			types.Remove(typeof(T));
-			Archetype newArch = GetOrCreateArchetype(types);
-			archetype.MoveTo(entity, newArch);
-			_entities[entity] = newArch;
-			return true;
+			MoveEntity(entity, types);
 		}
 
+		/// <summary>
+		/// Check if entity has a component type
+		/// </summary>
+		/// <param name="entity"></param>
+		/// <typeparam name="T"></typeparam>
+		/// <returns></returns>
 		public bool Contains<T>(Entity entity) => _entities[entity].Has<T>();
+
+		/// <summary>
+		/// Move entity to new archetype
+		/// </summary>
+		/// <param name="entity"></param>
+		/// <param name="types"></param>
+		/// <returns>New archetype</returns>
+		private Archetype MoveEntity(in Entity entity, in HashSet<Type> types)
+		{
+			Archetype entityArchetype = _entities[entity];
+			Archetype newArch = GetOrCreateArchetype(types);
+			entityArchetype.MoveTo(entity, newArch);
+			_entities[entity] = newArch;
+			return newArch;
+		}
 
 		/// <summary>
 		/// Gets or creates exact archetype with given types
@@ -83,6 +138,7 @@ namespace SosoEcs
 		/// <returns></returns>
 		private IEnumerable<Archetype> GetArchetypes(params Type[] types)
 		{
+			// TODO: Get rid of loops. Create Bitwise type operations
 			foreach (Archetype archetype in _archetypes)
 			{
 				if (archetype.Has(types)) yield return archetype;
