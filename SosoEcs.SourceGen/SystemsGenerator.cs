@@ -15,15 +15,23 @@ namespace SosoEcs.SourceGen
 		{
 			context.RegisterPostInitializationOutput(ctx =>
 			{
-				StringBuilder systems = FileInitalizer.Init().CreateSystems(QUANTITY);
+				StringBuilder systems = FileInitalizer.Init()
+					.AppendSystemsNamespace()
+					.AppendSystems(QUANTITY, false)
+					.AppendSystems(QUANTITY, true);
+					
 				StringBuilder runners = FileInitalizer.Init()
 					.AppendSystemRunnersUsings()
 					.AppendLine("public partial class World")
 					.AppendLine("{")
-					.CreateSystemRunners(false, QUANTITY)
-					.CreateSystemRunners(true, QUANTITY)
-					.CreateSystemRunnersRef(false, QUANTITY)
-					.CreateSystemRunnersRef(true, QUANTITY)
+					.CreateSystemRunners(false, false, QUANTITY)
+					.CreateSystemRunners(false, true, QUANTITY)
+					.CreateSystemRunners(true, false, QUANTITY)
+					.CreateSystemRunners(true, true, QUANTITY)
+					.CreateSystemRunnersRef(false, false, QUANTITY)
+					.CreateSystemRunnersRef(false, true, QUANTITY)
+					.CreateSystemRunnersRef(true, false, QUANTITY)
+					.CreateSystemRunnersRef(true, true, QUANTITY)
 					.AppendLine("}");
 				
 				ctx.AddSource("ISystem.g", systems.ParseCs());

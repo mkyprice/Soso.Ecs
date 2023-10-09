@@ -18,20 +18,19 @@ namespace SosoEcs.SourceGen.Extensions.Systems
 			return sb;
 		}
 
-		public static StringBuilder CreateSystemRunnersRef(this StringBuilder sb, bool parallel, int amount)
+		public static StringBuilder CreateSystemRunnersRef(this StringBuilder sb, bool parallel, bool entitySystem, int amount)
 		{
 			StringBuilder interfaceGenerics = new StringBuilder();
 			StringBuilder archetypeGetGenerics = new StringBuilder();
-			string funcName = parallel ? "ParallelRun" : "Run";
 			for (int i = 0; i < amount; i++)
 			{
 				string generic = "T" + i;
 				interfaceGenerics.Append(generic);
 				archetypeGetGenerics.Append($"typeof({generic})");
 				
-				sb.AppendLine($"public void {funcName}<TS, {interfaceGenerics}>(TS system) where TS : struct, ISystem<{interfaceGenerics}>");
+				sb.AppendFunc(parallel, entitySystem, "TS system", interfaceGenerics);
 				sb.AppendLine("{");
-				sb.AppendSystemRunnerLoop(i, parallel);
+				sb.AppendSystemRunnerLoop(i, parallel, entitySystem);
 				sb.AppendLine("}");
 				
 
@@ -41,24 +40,21 @@ namespace SosoEcs.SourceGen.Extensions.Systems
 			return sb;
 		}
 		
-		public static StringBuilder CreateSystemRunners(this StringBuilder sb, bool parallel, int amount)
+		public static StringBuilder CreateSystemRunners(this StringBuilder sb, bool parallel, bool entitySystem, int amount)
 		{
 			StringBuilder interfaceGenerics = new StringBuilder();
 			StringBuilder archetypeGetGenerics = new StringBuilder();
-			string funcName = parallel ? "ParallelRun" : "Run";
 			for (int i = 0; i < amount; i++)
 			{
 				string generic = "T" + i;
 				interfaceGenerics.Append(generic);
 				archetypeGetGenerics.Append($"typeof({generic})");
-				
-				sb.AppendLine($"public void {funcName}<TS, {interfaceGenerics}>() where TS : struct, ISystem<{interfaceGenerics}>");
-				sb.AppendLine("{");
-				sb.AppendLine("var system = new TS();");
-				
-				sb.AppendSystemRunnerLoop(i, parallel);
-				
-				sb.AppendLine("}");
+
+				sb.AppendFunc(parallel, entitySystem, String.Empty, interfaceGenerics)
+					.AppendLine("{")
+					.AppendLine("var system = new TS();")
+					.AppendSystemRunnerLoop(i, parallel, entitySystem)
+					.AppendLine("}");
 				
 
 				interfaceGenerics.Append(", ");
@@ -68,7 +64,24 @@ namespace SosoEcs.SourceGen.Extensions.Systems
 			return sb;
 		}
 
-		private static StringBuilder AppendSystemRunnerLoop(this StringBuilder sb, int amount, bool parallel)
+		private static StringBuilder AppendFunc(this StringBuilder sb, bool parallel, bool entitySystem, string args, StringBuilder interfaceGenerics)
+		{
+			string functionName = "Run";
+			if (parallel)
+			{
+				functionName += "Parallel";
+			}
+			if (entitySystem)
+			{
+				functionName += "Entity";
+			}
+			sb.AppendLine($"public void {functionName}<TS, {interfaceGenerics}>({args}) where TS : struct, ");
+			sb.AppendISystemName(entitySystem);
+			sb.Append($"<{interfaceGenerics}>");
+			return sb;
+		}
+
+		private static StringBuilder AppendSystemRunnerLoop(this StringBuilder sb, int amount, bool parallel, bool entitySystem)
 		{
 			StringBuilder update = new StringBuilder();
 			StringBuilder archetypes = new StringBuilder();
@@ -90,7 +103,12 @@ namespace SosoEcs.SourceGen.Extensions.Systems
 			if (parallel) sb.AppendLine("Parallel.For(0, archetype.Size, i =>");
 			else sb.AppendLine("for (int i = 0; i < archetype.Size; i++)");
 			sb.AppendLine("{");
-			sb.AppendLine($"system.Update({update});");
+			sb.AppendLine($"system.Update(");
+			if (entitySystem)
+			{
+				sb.Append("archetype.GetEntity(i), ");
+			}
+			sb.Append($"{update});");
 			sb.AppendLine("}");
 			if (parallel) sb.Append(");");
 			sb.AppendLine("}");

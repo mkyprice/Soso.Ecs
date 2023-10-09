@@ -18,6 +18,7 @@ namespace SosoEcs.Components.Core
 		
 		private int _length = 256;
 		private readonly Dictionary<Entity, int> _entityIndicies = new Dictionary<Entity, int>();
+		private readonly Dictionary<int, Entity> _indexToEntity = new Dictionary<int, Entity>();
 		private readonly Array[] _components;
 		private readonly Dictionary<Type, int> _componentsIndicies = new Dictionary<Type, int>();
 
@@ -87,6 +88,7 @@ namespace SosoEcs.Components.Core
 			if (_entityIndicies.ContainsKey(entity) == false)
 			{
 				_entityIndicies[entity] = Size;
+				_indexToEntity[Size] = entity;
 				Size++;
 				if (Size >= _length) Resize(_length * 2);
 			}
@@ -101,6 +103,7 @@ namespace SosoEcs.Components.Core
 			Size--;
 
 			_entityIndicies.Remove(entity);
+			_indexToEntity.Remove(entityIndex);
 			foreach (Array components in _components)
 			{
 				components.SetValue(components.GetValue(Size), entityIndex);
@@ -122,7 +125,10 @@ namespace SosoEcs.Components.Core
 				_components[comp.Value] = tmp;
 			}
 		}
-		
+
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public Entity GetEntity(int index) => _indexToEntity[index];
 		
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public ref T Get<T>(Entity entity) => ref GetArray<T>()[_entityIndicies[entity]];

@@ -126,7 +126,7 @@ namespace SosoEcs.Benchmarks
 		}
 		protected override void Update()
 		{
-			Ecs.ParallelRun<Physics, Transform, RigidBody>();
+			Ecs.RunParallel<Physics, Transform, RigidBody>();
 		}
 		
 		protected override void Render()
