@@ -17,11 +17,13 @@ namespace SosoEcs.Benchmarks
 	{
 		public int Width, Height;
 		public Color Tint;
+		public float Z;
 	}
 	struct CircleShape2D
 	{
 		public int Radius;
 		public Color Tint;
+		public float Z;
 	}
 
 	struct Physics : ISystem<Transform, RigidBody>
@@ -34,26 +36,45 @@ namespace SosoEcs.Benchmarks
 		}
 	}
 
-	struct RectRenderer : ISystem<Transform, RectShape2D>
+	struct Renderer : ISystem<Transform, RectShape2D>, ISystem<Transform, CircleShape2D>
 	{
+		private static PriorityQueue<Action, float> _drawQueue = new PriorityQueue<Action, float>(10_000);
+		public Renderer()
+		{
+		}
 		public void Update(ref Transform t0, ref RectShape2D t1)
 		{
-			Raylib.DrawRectangle((int)t0.Position.X, (int)t0.Position.Y, t1.Width, t1.Height, t1.Tint);
+			Vector2 pos = t0.Position;
+			int width = t1.Width;
+			int height = t1.Height;
+			Color tint = t1.Tint;
+			float z = t1.Z;
+			Raylib.DrawRectangle((int)pos.X, (int)pos.Y, width, height, tint);
+			// _drawQueue.Enqueue(() => Raylib.DrawRectangle((int)pos.X, (int)pos.Y, width, height, tint), z);
 		}
-	}
-
-	struct CircleRenderer : ISystem<Transform, CircleShape2D>
-	{
 		public void Update(ref Transform t0, ref CircleShape2D t1)
 		{
-			Raylib.DrawCircle((int)t0.Position.X, (int)t0.Position.Y, t1.Radius, t1.Tint);
+			Vector2 pos = t0.Position;
+			float radius = t1.Radius;
+			Color tint = t1.Tint;
+			float z = t1.Z;
+			Raylib.DrawCircle((int)pos.X, (int)pos.Y, radius, tint);
+			// _drawQueue.Enqueue(() => Raylib.DrawCircle((int)pos.X, (int)pos.Y, radius, tint), z);
+		}
+
+		public void Draw()
+		{
+			while (_drawQueue.Count > 0)
+			{
+				_drawQueue.Dequeue()();
+			}
 		}
 	}
 	
 	public class EntitiesWindow : Window
 	{
 		private World Ecs;
-		private List<Entity> _entities = new List<Entity>(10_000);
+		private List<Entity> _entities = new List<Entity>(100_000);
 		public EntitiesWindow() : base("Graphical Benchmark")
 		{
 		}
@@ -72,23 +93,32 @@ namespace SosoEcs.Benchmarks
 					{
 						Velocity = new Vector2(Random.Shared.NextSingle(), Random.Shared.NextSingle()) * 256 - new Vector2(128)
 					}));
-				if (i % 2 == 0)
+				_entities[^1].Set(new RectShape2D()
 				{
-					_entities[^1].Set(new RectShape2D()
-					{
-						Width = 16,
-						Height = 16,
-						Tint = ColorExtension.GetRandomColor()
-					});
-				}
-				else
-				{
-					_entities[^1].Set(new CircleShape2D()
-					{
-						Radius = 16,
-						Tint = ColorExtension.GetRandomColor()
-					});
-				}
+					Width = 16,
+					Height = 16,
+					Tint = ColorExtension.GetRandomColor(),
+					Z = i
+				});
+				// if (i % 2 == 0)
+				// {
+				// 	_entities[^1].Set(new RectShape2D()
+				// 	{
+				// 		Width = 16,
+				// 		Height = 16,
+				// 		Tint = ColorExtension.GetRandomColor(),
+				// 		Z = i
+				// 	});
+				// }
+				// else
+				// {
+				// 	_entities[^1].Set(new CircleShape2D()
+				// 	{
+				// 		Radius = 4,
+				// 		Tint = ColorExtension.GetRandomColor(),
+				// 		Z = i
+				// 	});
+				// }
 			}
 		}
 		protected override void Unload()
@@ -97,18 +127,14 @@ namespace SosoEcs.Benchmarks
 		protected override void Update()
 		{
 			Ecs.ParallelRun<Physics, Transform, RigidBody>();
-			
-			// if (_entities.Count > 0)
-			// {
-			// 	int index = Random.Shared.Next(_entities.Count);
-			// 	Ecs.Destroy(_entities[index]);
-			// 	_entities.RemoveAt(index);
-			// }
 		}
+		
 		protected override void Render()
 		{
-			Ecs.Run<RectRenderer, Transform, RectShape2D>();
-			Ecs.Run<CircleRenderer, Transform, CircleShape2D>();
+			Renderer renderer = new Renderer();
+			Ecs.Run<Renderer, Transform, RectShape2D>(renderer);
+			Ecs.Run<Renderer, Transform, CircleShape2D>(renderer);
+			// renderer.Draw();
 		}
 	}
 }
