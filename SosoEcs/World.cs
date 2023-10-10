@@ -97,7 +97,7 @@ namespace SosoEcs
 		/// </summary>
 		/// <param name="entity"></param>
 		/// <typeparam name="T"></typeparam>
-		public void Remove<T>(Entity entity)
+		public void Remove<T>(in Entity entity)
 		{
 			Archetype archetype = _entities[entity];
 			HashSet<Type> types = archetype.Types;
@@ -111,7 +111,7 @@ namespace SosoEcs
 		/// <param name="entity"></param>
 		/// <typeparam name="T"></typeparam>
 		/// <returns></returns>
-		public bool Contains<T>(Entity entity) => _entities[entity].Has<T>();
+		public bool Contains<T>(in Entity entity) => _entities[entity].Has<T>();
 
 		/// <summary>
 		/// Move entity to new archetype

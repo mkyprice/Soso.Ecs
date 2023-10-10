@@ -131,7 +131,7 @@ namespace SosoEcs.Components.Core
 		public Entity GetEntity(int index) => _indexToEntity[index];
 		
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public ref T Get<T>(Entity entity) => ref GetArray<T>()[_entityIndicies[entity]];
+		public ref T Get<T>(Entity entity) => ref Get<T>(_entityIndicies[entity]);
 		
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public ref T Get<T>(int index) => ref GetArray<T>()[index];

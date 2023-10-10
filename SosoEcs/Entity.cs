@@ -18,7 +18,11 @@ namespace SosoEcs
 
 		#region Component Helpers
 
-		public void Set<T>(T component) => World.SetComponent(this, component);
+		public Entity Set<T>(T component)
+		{
+			World.SetComponent(this, component);
+			return this;
+		}
 		public ref T Get<T>() => ref World.GetComponent<T>(this);
 		public bool Contains<T>() => World.Contains<T>(this);
 		public void Remove<T>() => World.Remove<T>(this);
@@ -29,9 +33,9 @@ namespace SosoEcs
 		
 		public override string ToString() => $"{base.ToString()} ID: {Id}";
 		public override int GetHashCode() => Id;
-		public override bool Equals(object? obj) => obj is Entity e && e.Id == this.Id;
-		public static bool operator ==(Entity lhs, Entity rhs) => lhs.Equals(rhs);
-		public static bool operator !=(Entity lhs, Entity rhs) => !lhs.Equals(rhs);
+		public override bool Equals(object? obj) => obj is Entity e && e == this;
+		public static bool operator ==(Entity lhs, Entity rhs) => lhs.Id == rhs.Id;
+		public static bool operator !=(Entity lhs, Entity rhs) => lhs.Id != rhs.Id;
 
 		#endregion
 	}
