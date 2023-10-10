@@ -1,6 +1,7 @@
 ﻿using SosoEcs.Components.Core;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace SosoEcs
@@ -18,8 +19,7 @@ namespace SosoEcs
 		public Entity CreateEntity(params object[] components)
 		{
 			Entity entity = new Entity(this);
-
-			_entities[entity] = Archetype.Empty;
+			
 			SetComponents(entity, components);
 
 			return entity;
@@ -112,6 +112,17 @@ namespace SosoEcs
 		/// <typeparam name="T"></typeparam>
 		/// <returns></returns>
 		public bool Contains<T>(in Entity entity) => _entities[entity].Has<T>();
+		
+		/// <summary>
+		/// Create an entity in the world
+		/// </summary>
+		/// <param name="entity"></param>
+		internal void CreateEntity(Entity entity)
+		{
+			Debug.Assert(entity.World == this, "Tried to add an entity to the wrong world");
+
+			_entities[entity] = Archetype.Empty;
+		}
 
 		/// <summary>
 		/// Move entity to new archetype
