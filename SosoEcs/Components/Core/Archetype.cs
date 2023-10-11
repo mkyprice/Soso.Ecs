@@ -128,12 +128,20 @@ namespace SosoEcs.Components.Core
 		public bool Remove(Entity entity)
 		{
 			if (_entityIndexMap.TryGetValue(entity, out int entityIndex) == false) return false;
-			Size--;
-
+			
 			_entityIndexMap.Remove(entity);
+			
+			Size--;
+			
+			if (_entityIndexMap.TryGetValue(Size, out Entity switchEntity))
+			{
+				_entityIndexMap[switchEntity] = entityIndex;
+			}
+			
 			foreach (Array components in _components)
 			{
-				components.SetValue(components.GetValue(Size), entityIndex);
+				object? component = components.GetValue(Size);
+				components.SetValue(component, entityIndex);
 				components.SetValue(default, Size);
 			}
 			
