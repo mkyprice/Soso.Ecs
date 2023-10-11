@@ -40,7 +40,8 @@ namespace SosoEcs.SourceGen
 					.AppendQueryNamespace()
 					.AppendLine($"public partial class {InlineDelegates.CLASS}")
 					.AppendLine("{")
-					.AppendQueries(QUANTITY)
+					.AppendQueries(false, QUANTITY)
+					.AppendQueries(true, QUANTITY)
 					.AppendLine("}");
 				
 				StringBuilder queriesRunner = FileInitalizer.Init()
@@ -49,7 +50,8 @@ namespace SosoEcs.SourceGen
 					.AppendBaseNamespace()
 					.AppendLine("public partial class World")
 					.AppendLine("{")
-					.AppendInlineSystemRunner(QUANTITY)
+					.AppendInlineSystemRunner(false, QUANTITY)
+					.AppendInlineSystemRunner(true, QUANTITY)
 					.AppendLine("}");
 				
 				ctx.AddSource("ISystem.g", systems.ParseCs());
