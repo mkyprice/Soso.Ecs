@@ -1,5 +1,5 @@
+using SosoEcs.Systems;
 using SosoEcs.Tests.Components;
-using SosoEcs.Tests.Systems;
 
 namespace SosoEcs.Tests;
 
@@ -63,26 +63,48 @@ public class Tests
 		Assert.IsTrue(entity.Contains<TestCompB>());
 	}
 
+	struct CountingSystem : ISystem<TestCompA, TestCompB>
+	{
+		public void Update(ref TestCompA t0, ref TestCompB t1)
+		{
+			t0.Number += t1.Number;
+		}
+	}
 	[Test]
-	public void SystemsTest0()
+	public void CountingSystemsTest()
 	{
 		World world = new World();
+		List<Entity> entities = new List<Entity>();
 		for (int i = 0; i < 100; i++)
 		{
 			Entity entity = world.CreateEntity(new TestCompA()
 			{
-				Value = $"Hello{i}"
+				Number = 0
 			});
 		
 			entity.Set(new TestCompB()
 			{
-				Value = "World"
+				Number = i
 			});
+			entities.Add(entity);
 		}
 		
-		world.Run<TestSystemA, TestCompA, TestCompB>();
+		world.Run<CountingSystem, TestCompA, TestCompB>();
+
+		for (int i = 0; i < entities.Count; i++)
+		{
+			Assert.IsTrue(i == entities[i].Get<TestCompA>().Number, "System did not assign value {0}", i);
+		}
 	}
 
+
+	struct ComponentNotFound : ISystem<TestCompA, TestCompB>
+	{
+		public void Update(ref TestCompA t0, ref TestCompB t1)
+		{
+			Assert.IsFalse(true, "Update was hit");
+		}
+	}
 	[Test]
 	public void ComponentSystemNotFound()
 	{
@@ -92,6 +114,6 @@ public class Tests
 			Value = $"Hello"
 		});
 		
-		world.Run<TestSystemA, TestCompA, TestCompB>();
+		world.Run<ComponentNotFound, TestCompA, TestCompB>();
 	}
 }

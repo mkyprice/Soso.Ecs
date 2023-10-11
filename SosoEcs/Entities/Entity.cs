@@ -1,6 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-
-namespace SosoEcs
+﻿namespace SosoEcs
 {
 	public readonly struct Entity
 	{
@@ -14,6 +12,7 @@ namespace SosoEcs
 			Id = _nextId;
 			_nextId++;
 			World = world;
+			World.CreateEntity(this);
 		}
 
 		#region Component Helpers
