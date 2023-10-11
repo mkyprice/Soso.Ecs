@@ -5,18 +5,21 @@ namespace SosoEcs.SourceGen.Extensions.Inline
 {
 	public static class InlineSystemRunner
 	{
-		public static StringBuilder AppendInlineSystemRunner(this StringBuilder sb, int quantity)
+		public static StringBuilder AppendInlineSystemRunner(this StringBuilder sb, bool entity, int quantity)
 		{
 			const string PARAM_NAME = "request";
 			StringBuilder generics = new StringBuilder();
+
+			string name = entity ? InlineDelegates.INLINE_REQUEST_ENTITY : InlineDelegates.INLINE_REQUEST;
+			
 			for (int i = 0; i < quantity; i++)
 			{
 				string generic = "T" + i;
 				generics.Append(generic);
-				sb.Append($"public void RunInline<{generics}>({InlineDelegates.CLASS}.{InlineDelegates.INLINE_REQUEST}<{generics}> {PARAM_NAME})");
+				sb.Append($"public void RunInline<{generics}>({InlineDelegates.CLASS}.{name}<{generics}> {PARAM_NAME})");
 				sb.Append("{");
 
-				sb.AppendSystemRunnerLoop(i, PARAM_NAME, false, false);
+				sb.AppendSystemRunnerLoop(i, PARAM_NAME, false, entity);
 
 				sb.Append("}");
 
