@@ -1,15 +1,16 @@
 using SosoEcs.SourceGen.Extensions.Core;
 using System.Text;
 
-namespace SosoEcs.SourceGen.Extensions.Query
+namespace SosoEcs.SourceGen.Extensions.Inline
 {
-	public static class Queries
+	public static class InlineDelegates
 	{
 		public static readonly string INLINE_REQUEST = "InlineRequest";
+		public static readonly string CLASS = "Requests";
 
 		public static StringBuilder AppendQueryNamespace(this StringBuilder sb)
 		{
-			sb.AppendLine($"namespace {Namespaces.BASE}.Queries;");
+			sb.AppendLine($"namespace {Namespaces.INLINES};");
 			return sb;
 		}
 		
@@ -20,7 +21,6 @@ namespace SosoEcs.SourceGen.Extensions.Query
 			
 			for (int i = 0; i < count; i++)
 			{
-				//public delegate void Inline<T0>(ref T0 t0);
 				string generic = "T" + i;
 				generics.Append(generic);
 				args.Append($"ref {generic} t{i}");

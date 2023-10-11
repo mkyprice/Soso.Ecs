@@ -15,7 +15,7 @@ namespace SosoEcs.Tests
 				Value = string.Empty
 			});
 			
-			world.InlineQuery((ref TestCompA a) =>
+			world.RunInline((ref TestCompA a) =>
 			{
 				a.Value = "Hello";
 			});

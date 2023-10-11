@@ -15,7 +15,6 @@ namespace SosoEcs.SourceGen.Extensions.Systems
 		{
 			sb.AppendLine($"using {Namespaces.ISYSTEMS};");
 			sb.AppendLine($"using {Namespaces.COMPONENTS_CORE};");
-			sb.AppendLine($"using {Namespaces.QUERIES};");
 			sb.AppendLine($"using System.Collections.Generic;");
 			sb.AppendLine($"using System;");
 			sb.AppendLine($"using System.Linq;");
