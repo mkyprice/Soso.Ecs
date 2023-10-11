@@ -20,7 +20,7 @@ namespace SosoEcs.Tests
 				a.Value = "Hello";
 			});
 			
-			Assert.IsTrue(a.Get<TestCompA>().Value.Equals("Hello"));
+			Assert.That(a.Get<TestCompA>().Value, Is.EqualTo("Hello"));
 		}
 	}
 }
