@@ -3,5 +3,6 @@
 	public struct TestCompB
 	{
 		public string Value;
+		public int Number;
 	}
 }
