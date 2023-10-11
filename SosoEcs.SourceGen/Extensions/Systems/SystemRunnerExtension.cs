@@ -5,16 +5,20 @@ namespace SosoEcs.SourceGen.Extensions.Systems
 {
 	public static class SystemRunnerExtension
 	{
+		public static StringBuilder AppendBaseNamespace(this StringBuilder sb)
+		{
+			sb.AppendLine($"namespace {Namespaces.BASE};");
+			return sb;
+		}
+		
 		public static StringBuilder AppendSystemRunnersUsings(this StringBuilder sb)
 		{
 			sb.AppendLine($"using {Namespaces.ISYSTEMS};");
 			sb.AppendLine($"using {Namespaces.COMPONENTS_CORE};");
-			sb.AppendLine($"using {Namespaces.QUERIES};");
 			sb.AppendLine($"using System.Collections.Generic;");
 			sb.AppendLine($"using System;");
 			sb.AppendLine($"using System.Linq;");
 			sb.AppendLine($"using System.Threading.Tasks;");
-			sb.AppendLine($"namespace {Namespaces.BASE};");
 			return sb;
 		}
 
@@ -30,7 +34,7 @@ namespace SosoEcs.SourceGen.Extensions.Systems
 				
 				sb.AppendFunc(parallel, entitySystem, "TS system", interfaceGenerics);
 				sb.AppendLine("{");
-				sb.AppendSystemRunnerLoop(i, parallel, entitySystem);
+				sb.AppendSystemRunnerLoop(i, "system.Update", parallel, entitySystem);
 				sb.AppendLine("}");
 				
 
@@ -53,7 +57,7 @@ namespace SosoEcs.SourceGen.Extensions.Systems
 				sb.AppendFunc(parallel, entitySystem, String.Empty, interfaceGenerics)
 					.AppendLine("{")
 					.AppendLine("var system = new TS();")
-					.AppendSystemRunnerLoop(i, parallel, entitySystem)
+					.AppendSystemRunnerLoop(i, "system.Update", parallel, entitySystem)
 					.AppendLine("}");
 				
 
@@ -81,7 +85,7 @@ namespace SosoEcs.SourceGen.Extensions.Systems
 			return sb;
 		}
 
-		private static StringBuilder AppendSystemRunnerLoop(this StringBuilder sb, int amount, bool parallel, bool entitySystem)
+		public static StringBuilder AppendSystemRunnerLoop(this StringBuilder sb, int amount, string function, bool parallel, bool entitySystem)
 		{
 			StringBuilder update = new StringBuilder();
 			StringBuilder archetypes = new StringBuilder();
@@ -103,7 +107,7 @@ namespace SosoEcs.SourceGen.Extensions.Systems
 			if (parallel) sb.AppendLine("Parallel.For(0, archetype.Size, i =>");
 			else sb.AppendLine("for (int i = 0; i < archetype.Size; i++)");
 			sb.AppendLine("{");
-			sb.AppendLine($"system.Update(");
+			sb.AppendLine($"{function}(");
 			if (entitySystem)
 			{
 				sb.Append("archetype.GetEntity(i), ");

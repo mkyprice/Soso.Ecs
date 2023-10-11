@@ -15,15 +15,15 @@ public class Tests
 		});
 
 		ref TestCompA c = ref entity.Get<TestCompA>();
-		Assert.IsTrue(c.Value.Equals("Hello"));
+		Assert.That(c.Value, Is.EqualTo("Hello"));
 		c.Value = "World";
-		Assert.IsTrue(entity.Get<TestCompA>().Value.Equals("World"));
+		Assert.That(entity.Get<TestCompA>().Value, Is.EqualTo("World"));
 	}
 
 	[Test]
 	public void MultipleComponents()
-	{
-		World world = new World();
+    {
+        World world = new World();
 		Entity entity = world.CreateEntity(new TestCompA()
 		{
 			Value = "Hello"
@@ -34,12 +34,15 @@ public class Tests
 			Value = "World"
 		});
 		
-		ref TestCompA c = ref entity.Get<TestCompA>();
-		Assert.IsTrue(c.Value.Equals("Hello"));
-		Assert.IsTrue(entity.Get<TestCompB>().Value.Equals("World"));
-	}
+		TestCompA c = entity.Get<TestCompA>();
+        Assert.Multiple(() =>
+        {
+            Assert.That(c.Value, Is.EqualTo("Hello"));
+            Assert.That(entity.Get<TestCompB>().Value, Is.EqualTo("World"));
+        });
+    }
 
-	[Test]
+    [Test]
 	public void RemoveTest()
 	{
 		World world = new World();
@@ -54,13 +57,13 @@ public class Tests
 		});
 		
 		ref TestCompA c = ref entity.Get<TestCompA>();
-		Assert.IsTrue(c.Value.Equals("Hello"));
-		Assert.IsTrue(entity.Get<TestCompB>().Value.Equals("World"));
+		Assert.That(c.Value, Is.EqualTo("Hello"));
+		Assert.That(entity.Get<TestCompB>().Value, Is.EqualTo("World"));
 
 		entity.Remove<TestCompA>();
 		
-		Assert.IsFalse(entity.Contains<TestCompA>());
-		Assert.IsTrue(entity.Contains<TestCompB>());
+		Assert.That(entity.Contains<TestCompA>(), Is.False);
+		Assert.That(entity.Contains<TestCompB>(), Is.True);
 	}
 
 	struct CountingSystem : ISystem<TestCompA, TestCompB>
@@ -93,7 +96,7 @@ public class Tests
 
 		for (int i = 0; i < entities.Count; i++)
 		{
-			Assert.IsTrue(i == entities[i].Get<TestCompA>().Number, "System did not assign value {0}", i);
+			Assert.That(i, Is.EqualTo(entities[i].Get<TestCompA>().Number), "System did not assign value {0}", i);
 		}
 	}
 

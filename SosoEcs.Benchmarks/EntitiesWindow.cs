@@ -35,41 +35,6 @@ namespace SosoEcs.Benchmarks
 			if (t0.Position.Y < 0 || t0.Position.Y > EntitiesWindow.Height) t1.Velocity.Y *= -1;
 		}
 	}
-
-	struct Renderer : ISystem<Transform, RectShape2D>, ISystem<Transform, CircleShape2D>
-	{
-		private static PriorityQueue<Action, float> _drawQueue = new PriorityQueue<Action, float>(10_000);
-		public Renderer()
-		{
-		}
-		public void Update(ref Transform t0, ref RectShape2D t1)
-		{
-			Vector2 pos = t0.Position;
-			int width = t1.Width;
-			int height = t1.Height;
-			Color tint = t1.Tint;
-			float z = t1.Z;
-			Raylib.DrawRectangle((int)pos.X, (int)pos.Y, width, height, tint);
-			// _drawQueue.Enqueue(() => Raylib.DrawRectangle((int)pos.X, (int)pos.Y, width, height, tint), z);
-		}
-		public void Update(ref Transform t0, ref CircleShape2D t1)
-		{
-			Vector2 pos = t0.Position;
-			float radius = t1.Radius;
-			Color tint = t1.Tint;
-			float z = t1.Z;
-			Raylib.DrawCircle((int)pos.X, (int)pos.Y, radius, tint);
-			// _drawQueue.Enqueue(() => Raylib.DrawCircle((int)pos.X, (int)pos.Y, radius, tint), z);
-		}
-
-		public void Draw()
-		{
-			while (_drawQueue.Count > 0)
-			{
-				_drawQueue.Dequeue()();
-			}
-		}
-	}
 	
 	public class EntitiesWindow : Window
 	{
@@ -100,25 +65,6 @@ namespace SosoEcs.Benchmarks
 					Tint = ColorExtension.GetRandomColor(),
 					Z = i
 				});
-				// if (i % 2 == 0)
-				// {
-				// 	_entities[^1].Set(new RectShape2D()
-				// 	{
-				// 		Width = 16,
-				// 		Height = 16,
-				// 		Tint = ColorExtension.GetRandomColor(),
-				// 		Z = i
-				// 	});
-				// }
-				// else
-				// {
-				// 	_entities[^1].Set(new CircleShape2D()
-				// 	{
-				// 		Radius = 4,
-				// 		Tint = ColorExtension.GetRandomColor(),
-				// 		Z = i
-				// 	});
-				// }
 			}
 		}
 		protected override void Unload()
@@ -131,10 +77,10 @@ namespace SosoEcs.Benchmarks
 		
 		protected override void Render()
 		{
-			Renderer renderer = new Renderer();
-			Ecs.Run<Renderer, Transform, RectShape2D>(renderer);
-			Ecs.Run<Renderer, Transform, CircleShape2D>(renderer);
-			// renderer.Draw();
+			Ecs.RunInline((ref Transform t, ref RectShape2D rect) =>
+			{
+				Raylib.DrawRectangle((int)t.Position.X, (int)t.Position.Y, rect.Width, rect.Height, rect.Tint);
+			});
 		}
 	}
 }
