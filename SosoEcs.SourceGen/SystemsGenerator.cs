@@ -1,6 +1,7 @@
 ﻿using Microsoft.CodeAnalysis;
 using SosoEcs.SourceGen.Extensions;
 using SosoEcs.SourceGen.Extensions.Core;
+using SosoEcs.SourceGen.Extensions.Query;
 using SosoEcs.SourceGen.Extensions.Systems;
 using System.Text;
 
@@ -22,6 +23,7 @@ namespace SosoEcs.SourceGen
 					
 				StringBuilder runners = FileInitalizer.Init()
 					.AppendSystemRunnersUsings()
+					.AppendBaseNamespace()
 					.AppendLine("public partial class World")
 					.AppendLine("{")
 					.CreateSystemRunners(false, false, QUANTITY)
@@ -33,9 +35,26 @@ namespace SosoEcs.SourceGen
 					.CreateSystemRunnersRef(true, false, QUANTITY)
 					.CreateSystemRunnersRef(true, true, QUANTITY)
 					.AppendLine("}");
+
+				StringBuilder queries = FileInitalizer.Init()
+					.AppendQueryNamespace()
+					.AppendLine("public partial class Query")
+					.AppendLine("{")
+					.AppendQueries(QUANTITY)
+					.AppendLine("}");
+				
+				StringBuilder queriesRunner = FileInitalizer.Init()
+					.AppendSystemRunnersUsings()
+					.AppendBaseNamespace()
+					.AppendLine("public partial class World")
+					.AppendLine("{")
+					.AppendQuerySystemRunner(QUANTITY)
+					.AppendLine("}");
 				
 				ctx.AddSource("ISystem.g", systems.ParseCs());
 				ctx.AddSource("Systems.g", runners.ParseCs());
+				ctx.AddSource("Queries.g", queries.ParseCs());
+				ctx.AddSource("QuerySystems.g", queriesRunner.ParseCs());
 			});
 		}
 	}
