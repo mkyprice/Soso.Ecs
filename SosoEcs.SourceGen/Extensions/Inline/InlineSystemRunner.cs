@@ -16,7 +16,7 @@ namespace SosoEcs.SourceGen.Extensions.Inline
 			{
 				string generic = "T" + i;
 				generics.Append(generic);
-				sb.Append($"public void RunInline<{generics}>({InlineDelegates.CLASS}.{name}<{generics}> {PARAM_NAME})");
+				sb.Append($"public void Run<{generics}>({InlineDelegates.CLASS}.{name}<{generics}> {PARAM_NAME})");
 				sb.Append("{");
 
 				sb.AppendSystemRunnerLoop(i, PARAM_NAME, false, entity);
