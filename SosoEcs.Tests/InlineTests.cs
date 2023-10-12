@@ -15,7 +15,7 @@ namespace SosoEcs.Tests
 				Value = string.Empty
 			});
 			
-			world.RunInline((ref TestCompA a) =>
+			world.Run((ref TestCompA a) =>
 			{
 				a.Value = "Hello";
 			});
@@ -34,7 +34,7 @@ namespace SosoEcs.Tests
 				Value = string.Empty
 			});
 			
-			world.RunInline((Entity entity, ref TestCompA comp) =>
+			world.Run((Entity entity, ref TestCompA comp) =>
 			{
 				Assert.That(entity, Is.EqualTo(a));
 				comp.Value = "Hello";

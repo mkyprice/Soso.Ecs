@@ -77,7 +77,7 @@ namespace SosoEcs.Benchmarks
 		
 		protected override void Render()
 		{
-			Ecs.RunInline((ref Transform t, ref RectShape2D rect) =>
+			Ecs.Run((ref Transform t, ref RectShape2D rect) =>
 			{
 				Raylib.DrawRectangle((int)t.Position.X, (int)t.Position.Y, rect.Width, rect.Height, rect.Tint);
 			});
