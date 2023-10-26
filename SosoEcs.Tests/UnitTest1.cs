@@ -8,8 +8,8 @@ public class Tests
 	[Test]
 	public void SetValue()
 	{
-		EcsWorld ecsWorld = new EcsWorld();
-		Entity entity = ecsWorld.CreateEntity(new TestCompA()
+		EcsWorld world = new EcsWorld();
+		Entity entity = world.CreateEntity(new TestCompA()
 		{
 			Value = "Hello"
 		});
@@ -23,8 +23,8 @@ public class Tests
 	[Test]
 	public void MultipleComponents()
     {
-        EcsWorld ecsWorld = new EcsWorld();
-		Entity entity = ecsWorld.CreateEntity(new TestCompA()
+        EcsWorld world = new EcsWorld();
+		Entity entity = world.CreateEntity(new TestCompA()
 		{
 			Value = "Hello"
 		});
@@ -45,8 +45,8 @@ public class Tests
     [Test]
 	public void RemoveTest()
 	{
-		EcsWorld ecsWorld = new EcsWorld();
-		Entity entity = ecsWorld.CreateEntity(new TestCompA()
+		EcsWorld world = new EcsWorld();
+		Entity entity = world.CreateEntity(new TestCompA()
 		{
 			Value = "Hello"
 		});
@@ -76,11 +76,11 @@ public class Tests
 	[Test]
 	public void CountingSystemsTest()
 	{
-		EcsWorld ecsWorld = new EcsWorld();
+		EcsWorld world = new EcsWorld();
 		List<Entity> entities = new List<Entity>();
 		for (int i = 0; i < 100; i++)
 		{
-			Entity entity = ecsWorld.CreateEntity(new TestCompA()
+			Entity entity = world.CreateEntity(new TestCompA()
 			{
 				Number = 0
 			});
@@ -92,7 +92,7 @@ public class Tests
 			entities.Add(entity);
 		}
 		
-		ecsWorld.Run<CountingSystem, TestCompA, TestCompB>();
+		world.Run<CountingSystem, TestCompA, TestCompB>();
 
 		for (int i = 0; i < entities.Count; i++)
 		{

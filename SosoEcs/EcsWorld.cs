@@ -119,7 +119,7 @@ namespace SosoEcs
 		/// <param name="entity"></param>
 		internal void CreateEntity(Entity entity)
 		{
-			Debug.Assert(entity.EcsWorld == this, "Tried to add an entity to the wrong world");
+			Debug.Assert(entity.World == this, "Tried to add an entity to the wrong world");
 
 			_entities[entity] = Archetype.Empty;
 		}

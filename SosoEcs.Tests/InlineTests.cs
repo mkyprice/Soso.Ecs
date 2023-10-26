@@ -7,15 +7,15 @@ namespace SosoEcs.Tests
 		[Test]
 		public void InlineSystem()
 		{
-			EcsWorld ecsWorld = new EcsWorld();
+			EcsWorld world = new EcsWorld();
 
-			Entity a = new Entity(ecsWorld);
+			Entity a = new Entity(world);
 			a.Set(new TestCompA()
 			{
 				Value = string.Empty
 			});
 			
-			ecsWorld.Run((ref TestCompA a) =>
+			world.Run((ref TestCompA a) =>
 			{
 				a.Value = "Hello";
 			});
@@ -26,15 +26,15 @@ namespace SosoEcs.Tests
 		[Test]
 		public void InlineEntitySystem()
 		{
-			EcsWorld ecsWorld = new EcsWorld();
+			EcsWorld world = new EcsWorld();
 
-			Entity a = new Entity(ecsWorld);
+			Entity a = new Entity(world);
 			a.Set(new TestCompA()
 			{
 				Value = string.Empty
 			});
 			
-			ecsWorld.Run((Entity entity, ref TestCompA comp) =>
+			world.Run((Entity entity, ref TestCompA comp) =>
 			{
 				Assert.That(entity, Is.EqualTo(a));
 				comp.Value = "Hello";

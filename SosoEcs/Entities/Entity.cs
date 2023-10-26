@@ -3,28 +3,28 @@
 	public readonly struct Entity
 	{
 		public readonly int Id;
-		public readonly EcsWorld EcsWorld;
+		public readonly EcsWorld World;
 		
 		private static int _nextId = 1;
 
-		public Entity(EcsWorld ecsWorld)
+		public Entity(EcsWorld world)
 		{
 			Id = _nextId;
 			_nextId++;
-			EcsWorld = ecsWorld;
-			EcsWorld.CreateEntity(this);
+			World = world;
+			World.CreateEntity(this);
 		}
 
 		#region Component Helpers
 
 		public Entity Set<T>(T component)
 		{
-			EcsWorld.SetComponent(this, component);
+			World.SetComponent(this, component);
 			return this;
 		}
-		public ref T Get<T>() => ref EcsWorld.GetComponent<T>(this);
-		public bool Contains<T>() => EcsWorld.Contains<T>(this);
-		public void Remove<T>() => EcsWorld.Remove<T>(this);
+		public ref T Get<T>() => ref World.GetComponent<T>(this);
+		public bool Contains<T>() => World.Contains<T>(this);
+		public void Remove<T>() => World.Remove<T>(this);
 
 		#endregion
 
