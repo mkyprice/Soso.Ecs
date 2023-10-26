@@ -11,6 +11,7 @@ namespace SosoEcs.SourceGen
 	public sealed class SystemsGenerator : IIncrementalGenerator
 	{
 		public const int QUANTITY = 20;
+		public const string ECS_WORLD_CLASS = "EcsWorld";
 		
 		public void Initialize(IncrementalGeneratorInitializationContext context)
 		{
@@ -24,7 +25,7 @@ namespace SosoEcs.SourceGen
 				StringBuilder runners = FileInitalizer.Init()
 					.AppendSystemRunnersUsings()
 					.AppendBaseNamespace()
-					.AppendLine("public partial class World")
+					.AppendLine($"public partial class {ECS_WORLD_CLASS}")
 					.AppendLine("{")
 					.CreateSystemRunners(false, false, QUANTITY)
 					.CreateSystemRunners(false, true, QUANTITY)
@@ -48,7 +49,7 @@ namespace SosoEcs.SourceGen
 					.AppendSystemRunnersUsings()
 					.AppendLine($"using {Namespaces.INLINES};")
 					.AppendBaseNamespace()
-					.AppendLine("public partial class World")
+					.AppendLine($"public partial class {ECS_WORLD_CLASS}")
 					.AppendLine("{")
 					.AppendInlineSystemRunner(false, QUANTITY)
 					.AppendInlineSystemRunner(true, QUANTITY)

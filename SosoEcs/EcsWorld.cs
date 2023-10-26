@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace SosoEcs
 {
-	public partial class World
+	public partial class EcsWorld
 	{
 		private readonly Dictionary<Entity, Archetype> _entities = new Dictionary<Entity, Archetype>();
 		private readonly List<Archetype> _archetypes = new List<Archetype>();

@@ -8,7 +8,7 @@ public class Tests
 	[Test]
 	public void SetValue()
 	{
-		World world = new World();
+		EcsWorld world = new EcsWorld();
 		Entity entity = world.CreateEntity(new TestCompA()
 		{
 			Value = "Hello"
@@ -23,7 +23,7 @@ public class Tests
 	[Test]
 	public void MultipleComponents()
     {
-        World world = new World();
+        EcsWorld world = new EcsWorld();
 		Entity entity = world.CreateEntity(new TestCompA()
 		{
 			Value = "Hello"
@@ -45,7 +45,7 @@ public class Tests
     [Test]
 	public void RemoveTest()
 	{
-		World world = new World();
+		EcsWorld world = new EcsWorld();
 		Entity entity = world.CreateEntity(new TestCompA()
 		{
 			Value = "Hello"
@@ -76,7 +76,7 @@ public class Tests
 	[Test]
 	public void CountingSystemsTest()
 	{
-		World world = new World();
+		EcsWorld world = new EcsWorld();
 		List<Entity> entities = new List<Entity>();
 		for (int i = 0; i < 100; i++)
 		{
@@ -111,7 +111,7 @@ public class Tests
 	[Test]
 	public void ComponentSystemNotFound()
 	{
-		World world = new World();
+		EcsWorld world = new EcsWorld();
 		world.CreateEntity(new TestCompA()
 		{
 			Value = $"Hello"

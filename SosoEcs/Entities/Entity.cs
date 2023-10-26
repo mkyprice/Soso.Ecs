@@ -3,11 +3,11 @@
 	public readonly struct Entity
 	{
 		public readonly int Id;
-		public readonly World World;
+		public readonly EcsWorld World;
 		
 		private static int _nextId = 1;
 
-		public Entity(World world)
+		public Entity(EcsWorld world)
 		{
 			Id = _nextId;
 			_nextId++;

@@ -38,14 +38,14 @@ namespace SosoEcs.Benchmarks
 	
 	public class EntitiesWindow : Window
 	{
-		private World Ecs;
+		private EcsWorld Ecs;
 		private List<Entity> _entities = new List<Entity>(100_000);
 		public EntitiesWindow() : base("Graphical Benchmark")
 		{
 		}
 		protected override void Load()
 		{
-			Ecs = new World();
+			Ecs = new EcsWorld();
 
 			for (int i = 0; i < _entities.Capacity; i++)
 			{

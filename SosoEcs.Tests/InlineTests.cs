@@ -7,7 +7,7 @@ namespace SosoEcs.Tests
 		[Test]
 		public void InlineSystem()
 		{
-			World world = new World();
+			EcsWorld world = new EcsWorld();
 
 			Entity a = new Entity(world);
 			a.Set(new TestCompA()
@@ -26,7 +26,7 @@ namespace SosoEcs.Tests
 		[Test]
 		public void InlineEntitySystem()
 		{
-			World world = new World();
+			EcsWorld world = new EcsWorld();
 
 			Entity a = new Entity(world);
 			a.Set(new TestCompA()
