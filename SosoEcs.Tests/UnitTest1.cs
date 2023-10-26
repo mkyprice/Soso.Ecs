@@ -111,12 +111,12 @@ public class Tests
 	[Test]
 	public void ComponentSystemNotFound()
 	{
-		EcsWorld ecsWorld = new EcsWorld();
-		ecsWorld.CreateEntity(new TestCompA()
+		EcsWorld world = new EcsWorld();
+		world.CreateEntity(new TestCompA()
 		{
 			Value = $"Hello"
 		});
 		
-		ecsWorld.Run<ComponentNotFound, TestCompA, TestCompB>();
+		world.Run<ComponentNotFound, TestCompA, TestCompB>();
 	}
 }
