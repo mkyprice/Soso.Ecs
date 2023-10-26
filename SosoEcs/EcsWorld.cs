@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace SosoEcs
 {
-	public partial class World
+	public partial class EcsWorld
 	{
 		private readonly Dictionary<Entity, Archetype> _entities = new Dictionary<Entity, Archetype>();
 		private readonly List<Archetype> _archetypes = new List<Archetype>();
@@ -119,7 +119,7 @@ namespace SosoEcs
 		/// <param name="entity"></param>
 		internal void CreateEntity(Entity entity)
 		{
-			Debug.Assert(entity.World == this, "Tried to add an entity to the wrong world");
+			Debug.Assert(entity.EcsWorld == this, "Tried to add an entity to the wrong world");
 
 			_entities[entity] = Archetype.Empty;
 		}
