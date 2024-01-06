@@ -70,10 +70,10 @@ namespace SosoEcs
 		/// </summary>
 		/// <param name="entity"></param>
 		/// <param name="component"></param>
-		public void SetComponent(Entity entity, object component)
+		public void SetComponent<T>(Entity entity, T component)
 		{
 			Archetype archetype = _entities[entity];
-			Type type = component.GetType();
+			Type type = typeof(T);
 			if (archetype.Has(type) == false)
 			{
 				// Create or find archetype
@@ -81,7 +81,7 @@ namespace SosoEcs
 				types.Add(type);
 				archetype = MoveEntity(entity, types);
 			}
-			archetype.Set(entity, component);
+			archetype.SetAs(entity, component, type);
 		}
 
 		/// <summary>

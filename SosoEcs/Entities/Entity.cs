@@ -19,7 +19,7 @@
 
 		public Entity Set<T>(T component)
 		{
-			World.SetComponent(this, component);
+			World.SetComponent(this, (T)component);
 			return this;
 		}
 		public ref T Get<T>() => ref World.GetComponent<T>(this);

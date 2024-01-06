@@ -119,4 +119,20 @@ public class Tests
 		
 		world.Run<ComponentNotFound, TestCompA, TestCompB>();
 	}
+
+	[Test]
+	public void Inheritance()
+	{
+		EcsWorld world = new EcsWorld();
+		world.CreateEntity().Set<BaseTestComp>(new InheritanceComp());
+		world.CreateEntity().Set(new BaseTestComp());
+
+		int componentsFound = 0;
+		world.Run((ref BaseTestComp c) =>
+		{
+			componentsFound++;
+			Assert.That(c.GetName(), Is.EqualTo(c.GetType().Name));
+		});
+		Assert.IsTrue(componentsFound == 2, "Failed to get component");
+	}
 }

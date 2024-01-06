@@ -44,10 +44,11 @@ namespace SosoEcs.Components.Core
 		{
 			if (_entityIndexMap.TryGetValue(entity, out int entityIndex))
 			{
-				foreach (Array t in _components)
+				foreach (KeyValuePair<Type,int> componentTypeIndicy in _componentTypeIndicies)
 				{
+					Array t = _components[componentTypeIndicy.Value];
 					object component = t.GetValue(entityIndex);
-					archetype.Set(entity, component);
+					archetype.SetAs(entity, component, componentTypeIndicy.Key);
 				}
 				Remove(entity);
 			}
@@ -108,6 +109,16 @@ namespace SosoEcs.Components.Core
 		public void Set(Entity entity, object component)
 		{
 			Type type = component.GetType();
+			SetAs(entity, component, type);
+		}
+
+		/// <summary>
+		/// Set an entities' component
+		/// </summary>
+		/// <param name="entity"></param>
+		/// <param name="component"></param>
+		public void SetAs(Entity entity, object component, Type type)
+		{
 			Debug.Assert(_componentTypeIndicies.ContainsKey(type), $"Archetype does not contain component type {type}");
 			if (_entityIndexMap.ContainsKey(entity) == false)
 			{
