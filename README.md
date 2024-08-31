@@ -1,7 +1,7 @@
-# SosoEcs
+# Soso.Ecs
 ## An easy to use Entity Component System Library
 
-SosoEcs is a simple to use ECS library using the archetype architecture.
+Soso.Ecs is a simple to use ECS library using the archetype architecture.
 
 > 🚧 **Warning** Proceed at your own risk. This is a _VERY_ in-development library so it will change _a lot_. I'll try to keep the master branch stable, but expect many breaking changes.
 
@@ -39,5 +39,5 @@ Ecs.RunParallel<Physics, Transform, RigidBody>();
 
 ## Dependancies
 
-EzNet has no external dependancies
-It targets netstandard2.1, net6.0, and net7.0. It uses latest C#
+Soso.Ecs uses the NETStandard.Library, System.Memory, and System.RuntimeComplilerServices.Unsafe
+It targets netstandard2.0 and uses latest C#
