@@ -33,11 +33,12 @@ struct Physics : ISystem<Transform, RigidBody>
 	}
 }
 
-World Ecs = new World();
+EcsWorld Ecs = new EcsWorld();
 Ecs.RunParallel<Physics, Transform, RigidBody>();
 ```
 
 ## Dependancies
 
 Soso.Ecs uses the NETStandard.Library, System.Memory, and System.RuntimeComplilerServices.Unsafe
-It targets netstandard2.0 and uses latest C#
+
+Soso.Ecs targets netstandard2.0 and uses latest C#
